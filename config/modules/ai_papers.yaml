@@ -1,0 +1,104 @@
+# AI 前沿论文模块 - 信息源配置
+
+module_name: "AI 前沿论文"
+module_id: "ai_papers"
+description: "追踪 AI 前沿论文，以产品经理视角解读技术趋势"
+
+arxiv_categories:
+  - "cs.AI"
+  - "cs.CL"
+  - "cs.LG"
+  - "cs.IR"
+  - "cs.HC"
+
+arxiv_settings:
+  max_results_per_query: 20
+  sort_by: "submittedDate"
+  sort_order: "descending"
+
+rss_feeds:
+  - name: "Papers With Code"
+    url: "https://paperswithcode.com/latest/rss"
+    category: "papers"
+    priority: 1
+    language: "en"
+
+  - name: "Google AI Blog"
+    url: "https://blog.google/technology/ai/rss/"
+    category: "ai_research"
+    priority: 1
+    language: "en"
+
+  - name: "DeepMind Blog"
+    url: "https://deepmind.google/blog/rss.xml"
+    category: "ai_research"
+    priority: 1
+    language: "en"
+
+  - name: "Meta AI Blog"
+    url: "https://ai.meta.com/blog/rss/"
+    category: "ai_research"
+    priority: 2
+    language: "en"
+
+  - name: "Anthropic Research"
+    url: "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_research.xml"
+    category: "ai_research"
+    priority: 1
+    language: "en"
+
+  - name: "Microsoft Research"
+    url: "https://www.microsoft.com/en-us/research/feed/"
+    category: "ai_research"
+    priority: 1
+    language: "en"
+
+keywords:
+  high_relevance:
+    - "LLM"
+    - "large language model"
+    - "RAG"
+    - "retrieval augmented generation"
+    - "retrieval-augmented generation"
+    - "agent"
+    - "AI agent"
+    - "multimodal"
+    - "GPT"
+    - "prompt engineering"
+    - "reasoning"
+    - "chain of thought"
+    - "instruction tuning"
+    - "RLHF"
+    - "GEO"
+    - "multi-modal inference"
+
+  medium_relevance:
+    - "transformer"
+    - "fine-tuning"
+    - "embedding"
+    - "vector database"
+    - "attention mechanism"
+    - "diffusion model"
+    - "reinforcement learning"
+    - "knowledge distillation"
+    - "model compression"
+    - "few-shot learning"
+
+  low_relevance:
+    - "neural network"
+    - "deep learning"
+    - "machine learning"
+    - "optimization"
+    - "benchmark"
+
+learning_track:
+  month_1: "LLM 基础架构与主流模型全景"
+  month_2: "Prompt Engineering 与应用实践"
+  month_3: "RAG 架构设计与检索增强"
+  month_4: "AI Agent 框架与自主推理"
+  month_5: "多模态模型与跨模态应用"
+  month_6: "模型微调与领域适配"
+  month_7: "AI 安全、对齐与可解释性"
+  month_8: "AI 基础设施与工程实践"
+  month_9: "AI 产品设计与用户体验"
+  month_10: "AI 前沿趋势与未来方向"

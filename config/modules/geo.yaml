@@ -1,0 +1,175 @@
+# GEO 模块 - 信息源配置
+# Generative Engine Optimization 学习
+
+module_name: "GEO 学习"
+module_id: "geo"
+description: "系统学习 Generative Engine Optimization，掌握 AI 搜索优化"
+
+# =============================================
+# 信息源分层：daily / weekly
+# =============================================
+
+rss_feeds:
+  # ----- 📅 每日动态（高频）-----
+  - name: "OpenAI Blog"
+    url: "https://openai.com/blog/rss.xml"
+    category: "ai_search"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  - name: "Anthropic Blog"
+    url: "https://www.anthropic.com/news/rss.xml"
+    category: "ai_search"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  - name: "DeepMind Blog"
+    url: "https://deepmind.google/blog/rss.xml"
+    category: "ai_research"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  - name: "Google AI Blog"
+    url: "https://blog.google/technology/ai/rss/"
+    category: "ai_search"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  - name: "Microsoft Research Blog"
+    url: "https://www.microsoft.com/en-us/research/feed/"
+    category: "ai_research"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  - name: "Search Engine Land"
+    url: "https://searchengineland.com/feed"
+    category: "geo_core"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  - name: "Search Engine Journal"
+    url: "https://www.searchenginejournal.com/feed/"
+    category: "geo_core"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  - name: "Google Search Central Blog"
+    url: "https://developers.google.com/search/blog/feed.xml"
+    category: "official"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  # ----- 📊 每周深读（中频）-----
+  - name: "Moz Blog"
+    url: "https://moz.com/blog/feed"
+    category: "seo_geo"
+    frequency: "weekly"
+    priority: 2
+    language: "en"
+
+  - name: "Ahrefs Blog"
+    url: "https://ahrefs.com/blog/feed/"
+    category: "seo_geo"
+    frequency: "weekly"
+    priority: 2
+    language: "en"
+
+  - name: "The Verge - AI"
+    url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+    category: "ai_news"
+    frequency: "weekly"
+    priority: 2
+    language: "en"
+
+  - name: "Ars Technica - AI"
+    url: "https://feeds.arstechnica.com/arstechnica/technology-lab"
+    category: "ai_news"
+    frequency: "weekly"
+    priority: 2
+    language: "en"
+
+  - name: "Microsoft Bing Blogs"
+    url: "https://blogs.bing.com/feed"
+    category: "ai_search"
+    frequency: "weekly"
+    priority: 2
+    language: "en"
+
+long_cycle_notes: "arXiv 论文通过 AI论文模块自动检索；Gartner/Forrester 报告无公开 RSS，通过博主精选模块手动录入"
+
+# arXiv 关键词（供 ArxivScraper(module='geo') 使用）
+arxiv_categories:
+  - "cs.IR"
+  - "cs.AI"
+  - "cs.CL"
+
+arxiv_settings:
+  max_results_per_query: 10
+  sort_by: "submittedDate"
+  sort_order: "descending"
+
+keywords:
+  high_relevance:
+    - "GEO"
+    - "generative engine optimization"
+    - "AI search"
+    - "AI overview"
+    - "AI overviews"
+    - "perplexity"
+    - "ChatGPT search"
+    - "Bing copilot"
+    - "generative search"
+    - "AI-powered search"
+    - "SGE"
+    - "search generative experience"
+    - "LLM search"
+    - "conversational search"
+    - "AI citation"
+    - "AI visibility"
+    - "Generative Inference Optimization"
+    - "multi-modal RAG"
+    - "inference optimization"
+
+  medium_relevance:
+    - "SEO"
+    - "search optimization"
+    - "SERP"
+    - "featured snippet"
+    - "structured data"
+    - "schema markup"
+    - "E-E-A-T"
+    - "content optimization"
+    - "search ranking"
+    - "organic traffic"
+    - "knowledge graph"
+    - "semantic search"
+    - "zero-click search"
+    - "answer engine"
+
+  low_relevance:
+    - "digital marketing"
+    - "content marketing"
+    - "brand visibility"
+    - "web analytics"
+    - "Google update"
+    - "algorithm update"
+
+learning_track:
+  month_1: "GEO 基础概念与 AI 搜索引擎全景"
+  month_2: "AI 搜索引擎工作原理深度剖析"
+  month_3: "GEO vs SEO：差异、联系与融合策略"
+  month_4: "内容优化策略：让 AI 引用你的内容"
+  month_5: "结构化数据、Schema Markup 与 GEO"
+  month_6: "品牌在 AI 回答中的呈现与优化"
+  month_7: "GEO 监测、分析与效果衡量"
+  month_8: "GEO 实战案例分析与最佳实践"
+  month_9: "GEO 工具生态与自动化方案"
+  month_10: "GEO 策略制定与未来趋势"

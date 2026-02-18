@@ -1,0 +1,26 @@
+# AI Learning Hub Dependencies
+
+# 核心依赖
+feedparser>=6.0.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+openai>=1.12.0
+pyyaml>=6.0
+python-dateutil>=2.8.0
+
+# Web UI
+streamlit>=1.32.0
+pandas>=2.0.0
+
+# CLI
+rich>=13.7.0
+click>=8.1.0
+
+# YouTube 字幕提取
+youtube-transcript-api>=0.6.0
+
+# YouTube/音频下载（Whisper 备选方案）
+yt-dlp>=2024.1.0
+
+# arXiv 论文检索
+arxiv>=2.1.0

@@ -1,0 +1,118 @@
+# 博主 & AI 趋势模块 - 信息源配置
+# YouTube / Podcast / X(Twitter)
+
+module_name: "博主精选"
+module_id: "creators"
+description: "从海外优质博主内容中学习 AI 前沿趋势和产品方法论"
+
+youtube_channels:
+  - name: "Lenny's Podcast"
+    channel_id: "UC6t1O76G0jYXOAoYCm153dA"
+    rss_url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC6t1O76G0jYXOAoYCm153dA"
+    focus: "产品管理 + 增长 + AI"
+    language: "en"
+
+  - name: "Two Minute Papers"
+    channel_id: "UCbfYPyITQ-7l4upoX8nvctg"
+    rss_url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg"
+    focus: "AI 研究速递"
+    language: "en"
+
+  - name: "Henry AI Labs"
+    channel_id: "UCHB9VepY6kYvZjj0Bgxnpbw"
+    rss_url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCHB9VepY6kYvZjj0Bgxnpbw"
+    focus: "AI 论文深度解读"
+    language: "en"
+
+  - name: "张咋啦"
+    channel_id: "PLACEHOLDER"
+    rss_url: "https://www.youtube.com/feeds/videos.xml?channel_id=PLACEHOLDER"
+    focus: "AI 应用 + 产品"
+    language: "zh"
+
+podcast_feeds:
+  - name: "Lenny's Podcast"
+    rss_url: "https://www.lennyspodcast.com/rss/"
+    focus: "产品管理 + 增长 + AI"
+    language: "en"
+
+twitter_accounts:
+  rsshub_base: "https://rsshub.app"
+  accounts:
+    - name: "Lex Fridman"
+      username: "lexfridman"
+      focus: "AI interviews, deep conversations"
+    - name: "Yann LeCun"
+      username: "ylecun"
+      focus: "AI research, Meta AI"
+    - name: "Andrej Karpathy"
+      username: "karpathy"
+      focus: "LLM, AI education"
+    - name: "OpenAI"
+      username: "OpenAI"
+      focus: "Official announcements"
+    - name: "DeepMind"
+      username: "GoogleDeepMind"
+      focus: "Official announcements"
+    - name: "Anthropic"
+      username: "AnthropicAI"
+      focus: "Official announcements"
+  keywords_filter:
+    - "AI"
+    - "machine learning"
+    - "generative"
+    - "LLM"
+    - "multi-modal"
+    - "RAG"
+    - "GPT"
+    - "Claude"
+    - "Gemini"
+    - "GEO"
+    - "inference"
+    - "agent"
+
+keywords:
+  high_relevance:
+    - "AI 产品"
+    - "产品经理"
+    - "AI 应用"
+    - "product management"
+    - "AI tools"
+    - "AI workflow"
+    - "产品设计"
+    - "用户增长"
+    - "AI 落地"
+    - "LLM"
+    - "multi-modal"
+    - "RAG"
+    - "AI agent"
+
+  medium_relevance:
+    - "产品策略"
+    - "用户体验"
+    - "数据驱动"
+    - "growth"
+    - "product strategy"
+    - "AI integration"
+
+  low_relevance:
+    - "创业"
+    - "startup"
+    - "technology"
+    - "innovation"
+
+learning_track:
+  month_1: "AI 产品方法论入门"
+  month_2: "AI 在产品决策中的应用"
+  month_3: "AI 驱动的用户增长策略"
+  month_4: "AI 产品设计最佳实践"
+  month_5: "AI 工具链与工作流优化"
+  month_6: "数据 + AI 的产品分析"
+  month_7: "AI 产品的用户体验设计"
+  month_8: "AI 产品案例深度分析"
+  month_9: "AI 产品商业化与变现"
+  month_10: "AI 产品趋势与职业发展"
+
+learning_pace:
+  videos_per_week: 3
+  max_daily_minutes: 60

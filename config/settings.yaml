@@ -1,0 +1,62 @@
+# AI Learning Hub - 系统设置
+
+# OpenAI API 配置
+openai:
+  api_key: "${OPENAI_API_KEY}"
+  base_url: "https://api.moonshot.cn/v1"
+  model: "moonshot-v1-8k"
+  model_advanced: "moonshot-v1-32k"
+  temperature: 0.7
+  max_tokens: 4000
+
+# 抓取设置
+scraper:
+  max_articles_per_source: 20
+  request_timeout: 15
+  request_delay: 1
+  user_agent: "AI-Learning-Hub/1.0"
+  max_article_age_days: 2
+
+# 内容处理
+processor:
+  min_relevance_score: 0.35
+  max_daily_articles: 10
+  summary_length: "medium"
+
+# 学习设置
+learning:
+  daily_reading_minutes: 30
+  quiz_questions_per_day: 5
+  quiz_types:
+    - "multiple_choice"
+    - "true_false"
+    - "short_answer"
+  passing_score: 60
+
+# 总结设置
+summary:
+  weekly_day: "friday"
+  monthly_day: 1
+  include_stats: true
+  include_insights: true
+
+# 数据存储路径
+paths:
+  raw_data: "data/raw"
+  processed_data: "data/processed"
+  briefings: "data/briefings"
+  quizzes: "data/quizzes"
+  weekly_reports: "data/weekly"
+  monthly_reports: "data/monthly"
+  knowledge_base: "data/knowledge_base"
+  transcripts: "data/transcripts"
+  database: "data/ai_learning_hub.db"
+
+# 学习开始日期
+start_date: "2026-02-17"
+
+# 启用的模块
+modules:
+  - "geo"
+  - "ai_papers"
+  - "creators"
