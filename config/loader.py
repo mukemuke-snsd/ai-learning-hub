@@ -70,9 +70,14 @@ def get_data_path(subdir: str = "") -> Path:
 
 
 def get_db_path() -> Path:
-    """获取数据库路径。优先读环境变量（Render 部署用），否则用 settings.yaml 默认值（本地用）"""
+    """获取 SQLite 数据库路径（本地开发用）"""
     env_path = os.environ.get("AI_LEARNING_HUB_DB_PATH")
     if env_path:
         return Path(env_path)
     settings = load_settings()
     return get_project_root() / settings["paths"]["database"]
+
+
+def get_database_url() -> Optional[str]:
+    """获取数据库连接 URL。优先读 DATABASE_URL 环境变量（Supabase），否则返回 None（本地用 SQLite）"""
+    return os.environ.get("DATABASE_URL")

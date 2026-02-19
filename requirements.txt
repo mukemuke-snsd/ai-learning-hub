@@ -24,3 +24,6 @@ yt-dlp>=2024.1.0
 
 # arXiv 论文检索
 arxiv>=2.1.0
+
+# PostgreSQL 数据库（Supabase）
+psycopg2-binary>=2.9.0
