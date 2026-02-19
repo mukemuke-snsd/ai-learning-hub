@@ -47,15 +47,25 @@ class Database:
         return ", ".join([placeholder] * count)
 
     def _execute(self, sql: str, params: tuple = ()):
-        """执行 SQL，自动处理游标类型"""
+        """执行 SQL，自动处理游标类型。Postgres 模式下自动恢复失败事务。"""
         if self.use_postgres:
-            cursor = self.conn.cursor(
-                cursor_factory=psycopg2.extras.RealDictCursor
-            )
+            try:
+                cursor = self.conn.cursor(
+                    cursor_factory=psycopg2.extras.RealDictCursor
+                )
+                cursor.execute(sql, params)
+                return cursor
+            except Exception:
+                self.conn.rollback()
+                cursor = self.conn.cursor(
+                    cursor_factory=psycopg2.extras.RealDictCursor
+                )
+                cursor.execute(sql, params)
+                return cursor
         else:
             cursor = self.conn.cursor()
-        cursor.execute(sql, params)
-        return cursor
+            cursor.execute(sql, params)
+            return cursor
 
     def _fetchall_as_dicts(self, cursor) -> list:
         """将查询结果转为字典列表"""

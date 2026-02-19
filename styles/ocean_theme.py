@@ -686,6 +686,8 @@ html, body {
     border-radius: 8px !important;
     color: transparent !important;
     font-size: 0 !important;
+    line-height: 0 !important;
+    text-indent: -9999px !important;
     width: 32px !important;
     height: 32px !important;
     min-width: 32px !important;
@@ -696,19 +698,32 @@ html, body {
     position: relative !important;
     overflow: hidden !important;
 }
+[data-testid="stSidebarCollapseButton"] button *,
+[data-testid="collapsedControl"] button * {
+    display: none !important;
+    font-size: 0 !important;
+    color: transparent !important;
+    visibility: hidden !important;
+}
 [data-testid="stSidebarCollapseButton"] button::before,
 [data-testid="collapsedControl"] button::before {
-    content: "";
-    display: block;
-    width: 16px;
-    height: 16px;
+    content: "" !important;
+    display: block !important;
+    visibility: visible !important;
+    width: 16px !important;
+    height: 16px !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    text-indent: 0 !important;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
 }
 [data-testid="collapsedControl"] button::before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E") !important;
 }
 [data-testid="stSidebarCollapseButton"] button:hover,
 [data-testid="collapsedControl"] button:hover {
@@ -717,14 +732,10 @@ html, body {
 }
 [data-testid="stSidebarCollapseButton"] button:hover::before,
 [data-testid="collapsedControl"] button:hover::before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F1F5F9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F1F5F9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E") !important;
 }
 [data-testid="collapsedControl"] button:hover::before {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F1F5F9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E");
-}
-[data-testid="stSidebarCollapseButton"] button span,
-[data-testid="collapsedControl"] button span {
-    display: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F1F5F9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E") !important;
 }
 
 /* ================================================
