@@ -108,22 +108,23 @@ def render_knowledge(db):
 
     # --------- 内容库 ---------
     with tab_content:
+        ph = "%s" if db.use_postgres else "?"
         query = "SELECT * FROM content_items WHERE 1=1"
         params = []
 
         if search_q:
-            query += " AND (title LIKE ? OR summary LIKE ? OR tags LIKE ?)"
+            query += f" AND (title LIKE {ph} OR summary LIKE {ph} OR tags LIKE {ph})"
             params.extend([f"%{search_q}%", f"%{search_q}%", f"%{search_q}%"])
         if module_filter != "全部":
-            query += " AND module = ?"
+            query += f" AND module = {ph}"
             params.append(module_filter)
         if type_filter != "全部":
-            query += " AND content_type = ?"
+            query += f" AND content_type = {ph}"
             params.append(type_filter)
 
         query += f" ORDER BY {sort_options[sort_by]} LIMIT 50"
-        cursor = db.conn.execute(query, params)
-        items = [dict(row) for row in cursor.fetchall()]
+        cursor = db._execute(query, tuple(params))
+        items = db._fetchall_as_dicts(cursor)
 
         st.caption(f"共 {len(items)} 条" + (" (显示前50条)" if len(items) == 50 else ""))
 
@@ -223,15 +224,16 @@ def render_knowledge(db):
             else:
                 st.info(f"未找到与「{kb_kw}」相关的知识条目。")
         else:
+            ph = "%s" if db.use_postgres else "?"
             q = "SELECT * FROM knowledge_base"
             p = []
             if mod_param:
-                q += " WHERE module = ?"
+                q += f" WHERE module = {ph}"
                 p.append(mod_param)
             q += " ORDER BY updated_at DESC LIMIT 20"
 
-            cursor = db.conn.execute(q, p)
-            kb_items = [dict(row) for row in cursor.fetchall()]
+            cursor = db._execute(q, tuple(p))
+            kb_items = db._fetchall_as_dicts(cursor)
 
             if kb_items:
                 for item in kb_items:
@@ -264,7 +266,7 @@ def render_knowledge(db):
             unsafe_allow_html=True,
         )
 
-        cursor = db.conn.execute("""
+        cursor = db._execute("""
             SELECT module, source, platform,
                    COUNT(*) as item_count,
                    AVG(relevance_score) as avg_relevance,
@@ -274,7 +276,7 @@ def render_knowledge(db):
             GROUP BY module, source
             ORDER BY item_count DESC
         """)
-        source_stats = [dict(row) for row in cursor.fetchall()]
+        source_stats = db._fetchall_as_dicts(cursor)
 
         if source_stats:
             stats_df = pd.DataFrame(source_stats)

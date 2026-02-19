@@ -103,8 +103,9 @@ class ContentProcessor:
                         ai_quality_score=float(result.get("ai_quality_score", 5)),
                     )
                     if result.get("tags"):
-                        self.db.conn.execute(
-                            "UPDATE content_items SET tags = ? WHERE id = ?",
+                        ph = "%s" if self.db.use_postgres else "?"
+                        self.db._execute(
+                            f"UPDATE content_items SET tags = {ph} WHERE id = {ph}",
                             (result["tags"], item["id"])
                         )
                         self.db.conn.commit()

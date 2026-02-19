@@ -142,11 +142,11 @@ def render_review(db):
                     st.markdown(report)
 
         with sub_hist:
-            cursor = db.conn.execute("""
+            cursor = db._execute("""
                 SELECT * FROM weekly_reports
                 ORDER BY year DESC, week_number DESC LIMIT 20
             """)
-            reports = [dict(row) for row in cursor.fetchall()]
+            reports = db._fetchall_as_dicts(cursor)
             if reports:
                 for r in reports:
                     label = (f"{r['year']}年 第{r['week_number']}周 "
@@ -194,11 +194,11 @@ def render_review(db):
                     st.markdown(report)
 
         with sub_hist_m:
-            cursor = db.conn.execute("""
+            cursor = db._execute("""
                 SELECT * FROM monthly_reports
                 ORDER BY year DESC, month DESC LIMIT 12
             """)
-            reports = [dict(row) for row in cursor.fetchall()]
+            reports = db._fetchall_as_dicts(cursor)
             if reports:
                 for r in reports:
                     label = f"{r['year']}年{r['month']}月"
@@ -218,7 +218,7 @@ def render_review(db):
         )
         st.caption("AI 评分 >= 7 的内容，提炼的可落地启发和行动项")
 
-        cursor = db.conn.execute("""
+        cursor = db._execute("""
             SELECT title, source, module, actionable_insight,
                    core_conclusion, ai_quality_score, tags, url
             FROM content_items
@@ -226,7 +226,7 @@ def render_review(db):
             ORDER BY ai_quality_score DESC
             LIMIT 30
         """)
-        high_value = [dict(row) for row in cursor.fetchall()]
+        high_value = db._fetchall_as_dicts(cursor)
 
         module_labels = {"geo": "GEO", "ai_papers": "论文", "creators": "博主"}
         module_pills = {
