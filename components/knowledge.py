@@ -273,7 +273,7 @@ def render_knowledge(db):
                    AVG(ai_quality_score) as avg_quality,
                    MAX(fetched_at) as last_fetched
             FROM content_items
-            GROUP BY module, source
+            GROUP BY module, source, platform
             ORDER BY item_count DESC
         """)
         source_stats = db._fetchall_as_dicts(cursor)

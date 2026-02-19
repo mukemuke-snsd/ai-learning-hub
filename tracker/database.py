@@ -422,6 +422,8 @@ class Database:
                 self.conn.commit()
                 return self.conn.total_changes > 0
         except Exception:
+            if self.use_postgres:
+                self.conn.rollback()
             return False
 
     def save_article(self, article: dict) -> bool:
