@@ -173,30 +173,19 @@ def render_workbench(db):
     st.divider()
 
     # =============================================
-    # SECTION 2: 每日测验
+    # SECTION 2: 每日测验（统一 10 道选择题）
     # =============================================
     st.markdown(
         f'{iheader("pencil", "每日测验", level=2, size=20)}',
         unsafe_allow_html=True,
     )
 
-    module_options = {
-        "geo": "GEO",
-        "ai_papers": "AI 论文",
-        "creators": "博主精选",
-    }
-    selected_module = st.radio(
-        "选择测验模块", list(module_options.keys()),
-        format_func=lambda x: module_options[x],
-        horizontal=True, key="wb_quiz_module",
-    )
-
     from generators.quiz_generator import QuizGenerator
-    quiz_gen = QuizGenerator(db, module=selected_module)
+    quiz_gen = QuizGenerator(db, module="unified")
 
-    qd_key = f"wb_qd_{selected_module}"
-    qs_key = f"wb_qs_{selected_module}"
-    qe_key = f"wb_qe_{selected_module}"
+    qd_key = "wb_qd_unified"
+    qs_key = "wb_qs_unified"
+    qe_key = "wb_qe_unified"
 
     if qd_key not in st.session_state:
         st.session_state[qd_key] = None
@@ -205,14 +194,12 @@ def render_workbench(db):
     if qe_key not in st.session_state:
         st.session_state[qe_key] = None
 
-    briefing = db.get_briefing(today_str, module=selected_module)
-    if not briefing:
-        briefing = db.get_briefing(today_str, module="unified")
+    briefing = db.get_briefing(today_str, module="unified")
 
     if not briefing:
-        st.caption("需要先生成早报才能进行测验。")
+        st.caption("需要先生成统一早报才能进行测验。")
     else:
-        existing_quiz = db.get_quiz(today_str, module=selected_module)
+        existing_quiz = db.get_quiz(today_str, module="unified")
 
         if existing_quiz and existing_quiz.get("completed") and not st.session_state[qs_key]:
             quiz_data = json.loads(existing_quiz["questions"])
@@ -228,8 +215,8 @@ def render_workbench(db):
                 st.session_state[qd_key] = None
                 st.session_state[qs_key] = False
                 st.session_state[qe_key] = None
-                if f"wb_ans_{selected_module}" in st.session_state:
-                    del st.session_state[f"wb_ans_{selected_module}"]
+                if "wb_ans_unified" in st.session_state:
+                    del st.session_state["wb_ans_unified"]
                 st.rerun()
 
         elif st.session_state[qd_key] is None:
@@ -237,6 +224,7 @@ def render_workbench(db):
                 st.session_state[qd_key] = json.loads(existing_quiz["questions"])
                 st.rerun()
             else:
+                st.caption("共 10 道选择题 | 每题 10 分 | 满分 100 分 | 及格 60 分")
                 if st.button("开始测验", type="primary",
                               use_container_width=True, key="wb_start_quiz"):
                     if not settings["openai"]["api_key"]:
@@ -260,13 +248,12 @@ def render_workbench(db):
                     imd("clipboard", f"<b>{title}</b>"),
                     unsafe_allow_html=True,
                 )
-                st.caption(f"共 {len(questions)} 题  |  每题 20 分  |  及格 60 分")
+                st.caption(f"共 {len(questions)} 题 | 每题 10 分 | 及格 60 分")
 
                 with st.form("wb_quiz_form"):
                     user_answers = {}
                     for q in questions:
                         q_id = str(q.get("id", ""))
-                        q_type = q.get("type", "unknown")
                         diff = q.get("difficulty", "medium")
                         diff_map = {
                             "easy": f"{DOT_GREEN()} 简单",
@@ -280,25 +267,11 @@ def render_workbench(db):
                         )
                         st.markdown(f"{q['question']}")
 
-                        if q_type == "multiple_choice":
-                            ans = st.radio("选择", q.get("options", []),
-                                           key=f"wb_q_{selected_module}_{q_id}",
-                                           index=None, label_visibility="collapsed")
-                            if ans:
-                                user_answers[q_id] = ans[0]
-                        elif q_type == "true_false":
-                            ans = st.radio("判断",
-                                           ["A. 正确（True）", "B. 错误（False）"],
-                                           key=f"wb_q_{selected_module}_{q_id}",
-                                           index=None, label_visibility="collapsed")
-                            if ans:
-                                user_answers[q_id] = "TRUE" if "正确" in ans else "FALSE"
-                        elif q_type == "short_answer":
-                            ans = st.text_area("答案",
-                                                key=f"wb_q_{selected_module}_{q_id}",
-                                                height=100)
-                            if ans:
-                                user_answers[q_id] = ans
+                        ans = st.radio("选择", q.get("options", []),
+                                       key=f"wb_q_unified_{q_id}",
+                                       index=None, label_visibility="collapsed")
+                        if ans:
+                            user_answers[q_id] = ans[0]
                         st.divider()
 
                     if st.form_submit_button("提交答案", type="primary",
@@ -308,18 +281,18 @@ def render_workbench(db):
                         if unanswered:
                             st.warning(f"第 {', '.join(unanswered)} 题未作答")
                         else:
-                            st.session_state[f"wb_ans_{selected_module}"] = user_answers
+                            st.session_state["wb_ans_unified"] = user_answers
                             st.session_state[qs_key] = True
                             st.rerun()
 
             if st.session_state[qs_key] and st.session_state[qe_key] is None:
                 with st.spinner("评估中..."):
                     evaluation = quiz_gen.evaluate_answers(
-                        quiz_data, st.session_state[f"wb_ans_{selected_module}"])
+                        quiz_data, st.session_state["wb_ans_unified"])
                     st.session_state[qe_key] = evaluation
-                    db.log_activity("quiz_completed", 15,
+                    db.log_activity("quiz_completed", 10,
                                     f"测验: {evaluation['percentage']:.1f}%",
-                                    selected_module)
+                                    "unified")
                 st.rerun()
 
             if st.session_state[qe_key]:
@@ -350,6 +323,6 @@ def render_workbench(db):
                     st.session_state[qd_key] = None
                     st.session_state[qs_key] = False
                     st.session_state[qe_key] = None
-                    if f"wb_ans_{selected_module}" in st.session_state:
-                        del st.session_state[f"wb_ans_{selected_module}"]
+                    if "wb_ans_unified" in st.session_state:
+                        del st.session_state["wb_ans_unified"]
                     st.rerun()

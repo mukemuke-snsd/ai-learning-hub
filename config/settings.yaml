@@ -26,11 +26,9 @@ processor:
 # 学习设置
 learning:
   daily_reading_minutes: 30
-  quiz_questions_per_day: 5
+  quiz_questions_per_day: 10
   quiz_types:
     - "multiple_choice"
-    - "true_false"
-    - "short_answer"
   passing_score: 60
 
 # 总结设置
