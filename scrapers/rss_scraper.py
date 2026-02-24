@@ -35,22 +35,30 @@ class RSSScraper(BaseScraper):
         """抓取所有 RSS 源。frequency 可选 'daily'/'weekly'/'monthly'，
         为 None 时抓取所有源。"""
         all_articles = []
+        self._health = {"ok": [], "fail": []}
         for feed_config in self.feeds:
             if frequency and feed_config.get("frequency", "daily") != frequency:
                 continue
+            name = feed_config["name"]
             if verbose:
                 freq_tag = feed_config.get("frequency", "daily")
-                print(f"  📡 [{freq_tag}] 抓取: {feed_config['name']}...")
+                print(f"  📡 [{freq_tag}] 抓取: {name}...")
             try:
                 articles = self._fetch_feed(feed_config)
                 all_articles.extend(articles)
+                self._health["ok"].append(name)
                 if verbose:
                     print(f"     ✅ 获取 {len(articles)} 篇文章")
             except Exception as e:
+                self._health["fail"].append((name, str(e)[:80]))
                 if verbose:
                     print(f"     ❌ 失败: {str(e)[:80]}")
             time.sleep(self.delay)
         return all_articles
+
+    def get_health_report(self) -> dict:
+        """返回最近一次 fetch_all 的源健康报告"""
+        return getattr(self, "_health", {"ok": [], "fail": []})
 
     def get_feeds_by_frequency(self) -> dict:
         """按频率分组返回信息源列表"""
@@ -126,7 +134,7 @@ class RSSScraper(BaseScraper):
             except (TypeError, ValueError):
                 pass
 
-        content_type = "paper" if self.module == "ai_papers" else "article"
+        content_type = "paper" if self.module == "ai_tech" else "article"
 
         return self.make_content_item(
             module=self.module,

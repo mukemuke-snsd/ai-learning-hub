@@ -80,7 +80,7 @@ class SummaryGenerator:
 
         system_prompt = (
             "你是一位 AI 学习顾问和复盘教练。\n"
-            "你需要生成一份涵盖多个学习模块（GEO、AI论文、博主内容）的周度学习总结。\n"
+            "你需要生成一份涵盖多个学习模块（GEO、AI技术前沿、AI产品策略）的周度学习总结。\n"
             "使用中文输出，Markdown 格式。\n"
             "要有洞察力，能指出进步和需要改进的地方。"
         )
@@ -115,8 +115,8 @@ class SummaryGenerator:
 
 ## 📚 各模块亮点
 ### GEO 学习
-### AI 论文
-### 博主精选
+### AI 技术前沿
+### AI 产品 & 策略
 
 ## 💪 进步与亮点
 
@@ -246,8 +246,8 @@ class SummaryGenerator:
 
 ## 📚 各模块学习回顾
 ### GEO 学习
-### AI 论文
-### 博主精选
+### AI 技术前沿
+### AI 产品 & 策略
 
 ## 📈 行业趋势洞察
 
@@ -284,7 +284,7 @@ class SummaryGenerator:
         return report
 
     def _module_label(self, module_id: str) -> str:
-        labels = {"geo": "GEO", "ai_papers": "AI论文", "creators": "博主"}
+        labels = {"geo": "GEO", "ai_tech": "AI技术", "ai_product": "AI产品"}
         return labels.get(module_id, module_id)
 
     def _save_report_file(self, report_type: str, filename: str,

@@ -5,6 +5,10 @@ import yaml
 from pathlib import Path
 from typing import Optional
 
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).parent.parent / ".env")
+
 
 def get_project_root() -> Path:
     return Path(__file__).parent.parent
@@ -34,7 +38,7 @@ def load_module_config(module_id: str) -> dict:
 def load_all_module_configs() -> dict:
     """加载所有已启用模块的配置"""
     settings = load_settings()
-    enabled = settings.get("modules", ["geo", "ai_papers", "creators"])
+    enabled = settings.get("modules", ["geo", "ai_tech", "ai_product"])
     configs = {}
     for mid in enabled:
         try:

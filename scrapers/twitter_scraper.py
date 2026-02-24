@@ -17,7 +17,7 @@ class TwitterScraper(BaseScraper):
     """通过 RSSHub 抓取 X/Twitter 账号内容"""
 
     def __init__(self):
-        self.module_cfg = load_module_config("creators")
+        self.module_cfg = load_module_config("ai_product")
         settings = load_settings()
         scraper_cfg = settings.get("scraper", {})
 
@@ -122,7 +122,7 @@ class TwitterScraper(BaseScraper):
                 pass
 
         return self.make_content_item(
-            module="creators",
+            module="ai_product",
             content_type="note",
             title=title.strip(),
             url=link.strip(),

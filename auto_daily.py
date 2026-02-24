@@ -30,7 +30,23 @@ logging.basicConfig(
 )
 log = logging.getLogger("auto_daily")
 
-ALL_MODULES = ["geo", "ai_papers", "creators"]
+ALL_MODULES = ["geo", "ai_tech", "ai_product"]
+
+
+def _log_health(module: str, rss_scraper):
+    """输出 RSS 源健康检查报告"""
+    health = rss_scraper.get_health_report()
+    ok_count = len(health["ok"])
+    fail_list = health["fail"]
+    if fail_list:
+        log.warning(
+            "[%s] 源健康检查: %d 成功, %d 失败 ⚠️",
+            module, ok_count, len(fail_list),
+        )
+        for name, err in fail_list:
+            log.warning("[%s]   ❌ %s — %s", module, name, err)
+    else:
+        log.info("[%s] 源健康检查: %d/%d 全部成功 ✅", module, ok_count, ok_count)
 
 
 def fetch_module(db, module: str, include_weekly: bool = False):
@@ -38,41 +54,49 @@ def fetch_module(db, module: str, include_weekly: bool = False):
     from scrapers.rss_scraper import RSSScraper
     from processors.content_processor import ContentProcessor
 
-    if module == "creators":
+    if module == "ai_product":
         items = []
         try:
             from scrapers.youtube_scraper import YouTubeScraper
-            scraper = YouTubeScraper()
+            scraper = YouTubeScraper(fetch_transcripts=False)
             items.extend(scraper.fetch_all(verbose=False))
         except ImportError:
-            log.warning("[creators] youtube_transcript_api 未安装，跳过 YouTube")
+            log.warning("[ai_product] youtube_transcript_api 未安装，跳过 YouTube")
 
-        try:
-            from scrapers.twitter_scraper import TwitterScraper
-            twitter = TwitterScraper()
-            tweets = twitter.fetch_all(verbose=False)
-            items.extend(tweets)
-            log.info("[creators] Twitter 获取 %d 条推文", len(tweets))
-        except Exception as e:
-            log.warning("[creators] Twitter 抓取失败: %s", str(e)[:80])
+        rss = RSSScraper(module=module)
+        rss_items = rss.fetch_all(verbose=False)
+        items.extend(rss_items)
+        log.info("[ai_product] RSS 获取 %d 条内容", len(rss_items))
+        _log_health(module, rss)
 
         processor = ContentProcessor(db, module=module)
         return processor.process_and_save(items)
 
-    if module == "ai_papers":
+    if module == "ai_tech":
         items = []
         try:
             from scrapers.arxiv_scraper import ArxivScraper
-            scraper = ArxivScraper(module="ai_papers")
+            scraper = ArxivScraper(module="ai_tech")
             items = scraper.fetch_all(verbose=False)
         except ImportError:
-            log.warning("[ai_papers] arxiv 包未安装，跳过 arXiv")
+            log.warning("[ai_tech] arxiv 包未安装，跳过 arXiv")
+
+        try:
+            from scrapers.youtube_scraper import YouTubeScraper
+            yt = YouTubeScraper(module="ai_tech", fetch_transcripts=False)
+            yt_items = yt.fetch_all(verbose=False)
+            items.extend(yt_items)
+            log.info("[ai_tech] YouTube 获取 %d 条内容", len(yt_items))
+        except ImportError:
+            log.warning("[ai_tech] youtube_transcript_api 未安装，跳过 YouTube")
+
         rss = RSSScraper(module=module)
         items.extend(rss.fetch_all(verbose=False))
+        _log_health(module, rss)
         processor = ContentProcessor(db, module=module)
         return processor.process_and_save(items)
 
-    # GEO: 分层抓取 + arXiv
+    # GEO: 分层抓取（纯 RSS，arXiv 已移至 ai_tech）
     scraper = RSSScraper(module=module)
     log.info("[%s] 抓取高频源 (daily)...", module)
     items = scraper.fetch_all(verbose=False, frequency="daily")
@@ -81,15 +105,7 @@ def fetch_module(db, module: str, include_weekly: bool = False):
         log.info("[%s] 抓取中频源 (weekly)...", module)
         items.extend(scraper.fetch_all(verbose=False, frequency="weekly"))
 
-    try:
-        from scrapers.arxiv_scraper import ArxivScraper
-        arxiv_scraper = ArxivScraper(module="geo")
-        arxiv_items = arxiv_scraper.fetch_all(verbose=False)
-        items.extend(arxiv_items)
-        log.info("[geo] arXiv 获取 %d 篇论文", len(arxiv_items))
-    except ImportError:
-        log.warning("[geo] arxiv 包未安装，跳过 GEO arXiv 检索")
-
+    _log_health(module, scraper)
     processor = ContentProcessor(db, module=module)
     return processor.process_and_save(items)
 

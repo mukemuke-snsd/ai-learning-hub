@@ -15,7 +15,7 @@ scraper:
   request_timeout: 15
   request_delay: 1
   user_agent: "AI-Learning-Hub/1.0"
-  max_article_age_days: 2
+  max_article_age_days: 7
 
 # 内容处理
 processor:
@@ -56,5 +56,5 @@ start_date: "2026-02-17"
 # 启用的模块
 modules:
   - "geo"
-  - "ai_papers"
-  - "creators"
+  - "ai_tech"
+  - "ai_product"

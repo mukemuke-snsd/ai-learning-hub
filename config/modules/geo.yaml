@@ -10,42 +10,7 @@ description: "系统学习 Generative Engine Optimization，掌握 AI 搜索优�
 # =============================================
 
 rss_feeds:
-  # ----- 📅 每日动态（高频）-----
-  - name: "OpenAI Blog"
-    url: "https://openai.com/blog/rss.xml"
-    category: "ai_search"
-    frequency: "daily"
-    priority: 1
-    language: "en"
-
-  - name: "Anthropic Blog"
-    url: "https://www.anthropic.com/news/rss.xml"
-    category: "ai_search"
-    frequency: "daily"
-    priority: 1
-    language: "en"
-
-  - name: "DeepMind Blog"
-    url: "https://deepmind.google/blog/rss.xml"
-    category: "ai_research"
-    frequency: "daily"
-    priority: 1
-    language: "en"
-
-  - name: "Google AI Blog"
-    url: "https://blog.google/technology/ai/rss/"
-    category: "ai_search"
-    frequency: "daily"
-    priority: 1
-    language: "en"
-
-  - name: "Microsoft Research Blog"
-    url: "https://www.microsoft.com/en-us/research/feed/"
-    category: "ai_research"
-    frequency: "daily"
-    priority: 1
-    language: "en"
-
+  # ----- 📅 每日动态（高频）— GEO/SEO 核心源 -----
   - name: "Search Engine Land"
     url: "https://searchengineland.com/feed"
     category: "geo_core"
@@ -82,20 +47,6 @@ rss_feeds:
     priority: 2
     language: "en"
 
-  - name: "The Verge - AI"
-    url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
-    category: "ai_news"
-    frequency: "weekly"
-    priority: 2
-    language: "en"
-
-  - name: "Ars Technica - AI"
-    url: "https://feeds.arstechnica.com/arstechnica/technology-lab"
-    category: "ai_news"
-    frequency: "weekly"
-    priority: 2
-    language: "en"
-
   - name: "Microsoft Bing Blogs"
     url: "https://blogs.bing.com/feed"
     category: "ai_search"
@@ -103,18 +54,7 @@ rss_feeds:
     priority: 2
     language: "en"
 
-long_cycle_notes: "arXiv 论文通过 AI论文模块自动检索；Gartner/Forrester 报告无公开 RSS，通过博主精选模块手动录入"
-
-# arXiv 关键词（供 ArxivScraper(module='geo') 使用）
-arxiv_categories:
-  - "cs.IR"
-  - "cs.AI"
-  - "cs.CL"
-
-arxiv_settings:
-  max_results_per_query: 10
-  sort_by: "submittedDate"
-  sort_order: "descending"
+long_cycle_notes: "AI 实验室博客已移至 ai_tech 模块；arXiv 论文通过 ai_tech 模块检索；Grok 每日任务覆盖 X 上的 GEO 讨论"
 
 keywords:
   high_relevance:

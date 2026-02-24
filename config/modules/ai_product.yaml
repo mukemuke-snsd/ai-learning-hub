@@ -1,0 +1,155 @@
+# AI 产品 & 策略模块 - 信息源配置
+# Newsletter / YouTube Podcast / Grok 导入
+
+module_name: "AI 产品 & 策略"
+module_id: "ai_product"
+description: "AI产品方法论、增长策略、商业化洞察，从顶级产品人内容中学习"
+
+youtube_channels:
+  - name: "Lenny's Podcast"
+    channel_id: "UC6t1O76G0jYXOAoYCm153dA"
+    rss_url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC6t1O76G0jYXOAoYCm153dA"
+    focus: "产品管理 + 增长 + AI"
+    language: "en"
+
+  - name: "Training Data (Sequoia)"
+    channel_id: "UCrjMbP0kknEesTwbsGrjbcA"
+    rss_url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCrjMbP0kknEesTwbsGrjbcA"
+    focus: "Sequoia + AI builder 对话"
+    language: "en"
+
+podcast_feeds:
+  - name: "Lenny's Podcast"
+    rss_url: "https://www.lennyspodcast.com/rss/"
+    focus: "产品管理 + 增长 + AI"
+    language: "en"
+
+rss_feeds:
+  # 核心 Newsletter
+  - name: "Peter Yang - Creator Economy"
+    url: "https://creatoreconomy.so/feed"
+    category: "ai_pm"
+    frequency: "weekly"
+    priority: 1
+    language: "en"
+
+  - name: "One Useful Thing (Ethan Mollick)"
+    url: "https://www.oneusefulthing.org/feed"
+    category: "ai_practice"
+    frequency: "weekly"
+    priority: 1
+    language: "en"
+
+  - name: "The Pragmatic Engineer"
+    url: "https://newsletter.pragmaticengineer.com/feed"
+    category: "eng_product"
+    frequency: "weekly"
+    priority: 2
+    language: "en"
+
+  # AI 产品日报
+  - name: "Ben's Bites"
+    url: "https://bensbites.com/feed"
+    category: "ai_product_daily"
+    frequency: "daily"
+    priority: 2
+    language: "en"
+
+  - name: "The Neuron"
+    url: "https://www.theneurondaily.com/feed"
+    category: "ai_product_daily"
+    frequency: "daily"
+    priority: 2
+    language: "en"
+
+  # VC / 融资 / 行业
+  - name: "a16z Newsletter"
+    url: "https://www.a16z.news/feed"
+    category: "vc_ai"
+    frequency: "weekly"
+    priority: 1
+    language: "en"
+
+  - name: "TechCrunch AI"
+    url: "https://techcrunch.com/category/artificial-intelligence/feed/"
+    category: "ai_funding"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  # 中文 AI 产业
+  - name: "36Kr"
+    url: "https://36kr.com/feed"
+    category: "ai_cn_industry"
+    frequency: "daily"
+    priority: 2
+    language: "zh"
+
+keywords:
+  high_relevance:
+    - "AI product"
+    - "product management"
+    - "AI PM"
+    - "product strategy"
+    - "AI workflow"
+    - "AI agent"
+    - "growth"
+    - "GTM"
+    - "product-market fit"
+    - "AI UX"
+    - "vibe coding"
+    - "AI 产品"
+    - "产品经理"
+    - "AI 应用"
+    - "AI tools"
+    - "产品设计"
+    - "用户增长"
+    - "AI 落地"
+    - "Claude"
+    - "GPT"
+    - "Gemini"
+    - "OpenAI"
+    - "Anthropic"
+    - "LLM"
+    - "AI startup"
+    - "AI funding"
+    - "AI strategy"
+
+  medium_relevance:
+    - "产品策略"
+    - "用户体验"
+    - "数据驱动"
+    - "product strategy"
+    - "AI integration"
+    - "business model"
+    - "monetization"
+    - "startup"
+    - "SaaS"
+    - "API"
+    - "developer tools"
+    - "AI safety"
+    - "AI regulation"
+    - "融资"
+    - "估值"
+
+  low_relevance:
+    - "创业"
+    - "technology"
+    - "innovation"
+    - "artificial intelligence"
+
+learning_track:
+  month_1: "AI 产品方法论入门"
+  month_2: "AI 在产品决策中的应用"
+  month_3: "AI Agent 产品化"
+  month_4: "AI 产品设计最佳实践"
+  month_5: "AI 产品增长策略"
+  month_6: "AI 产品商业化与变现"
+  month_7: "AI 产品的用户体验设计"
+  month_8: "AI 产品案例深度分析"
+  month_9: "AI 工具链与工作流优化"
+  month_10: "AI 产品趋势与职业发展"
+
+learning_pace:
+  videos_per_week: 3
+  max_daily_minutes: 60

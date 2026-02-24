@@ -21,8 +21,11 @@ except ImportError:
 class YouTubeScraper(BaseScraper):
     """YouTube 频道内容抓取器"""
 
-    def __init__(self):
-        self.module_cfg = load_module_config("creators")
+    def __init__(self, module: str = "ai_product",
+                 fetch_transcripts: bool = True):
+        self.module = module
+        self.fetch_transcripts = fetch_transcripts
+        self.module_cfg = load_module_config(module)
         settings = load_settings()
         scraper_cfg = settings.get("scraper", {})
 
@@ -135,11 +138,11 @@ class YouTubeScraper(BaseScraper):
         video_id = self._extract_video_id(link)
 
         transcript = ""
-        if video_id and HAS_TRANSCRIPT_API:
+        if video_id and HAS_TRANSCRIPT_API and self.fetch_transcripts:
             transcript = self.fetch_transcript(video_id, channel.get("language", "en"))
 
         return self.make_content_item(
-            module="creators",
+            module=self.module,
             content_type="video",
             title=title.strip(),
             url=link.strip(),
@@ -208,7 +211,7 @@ class YouTubeScraper(BaseScraper):
                 duration = self._parse_duration(entry.itunes_duration)
 
             item = self.make_content_item(
-                module="creators",
+                module=self.module,
                 content_type="podcast",
                 title=title.strip(),
                 url=link.strip(),

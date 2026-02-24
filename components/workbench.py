@@ -11,8 +11,8 @@ from styles.icons import icon, imd, iheader, DOT_GREEN, DOT_YELLOW, DOT_RED
 
 MODULE_META = {
     "geo": {"icon": "globe", "label": "GEO"},
-    "ai_papers": {"icon": "file-text", "label": "论文"},
-    "creators": {"icon": "video", "label": "博主"},
+    "ai_tech": {"icon": "cpu", "label": "AI技术"},
+    "ai_product": {"icon": "rocket", "label": "AI产品"},
 }
 
 
@@ -51,15 +51,15 @@ def render_workbench(db):
             unsafe_allow_html=True,
         )
 
-        tab_unified, tab_geo, tab_paper, tab_creator, tab_history = st.tabs([
-            "统一早报", "GEO", "论文", "博主", "历史"
+        tab_unified, tab_geo, tab_tech, tab_product, tab_history = st.tabs([
+            "统一早报", "GEO", "AI技术", "AI产品", "历史"
         ])
 
         with tab_unified:
             st.markdown(unified["content"])
             db.log_activity("briefing_read", 15, f"阅读 {today_str} 统一早报", "geo")
 
-        for tab, mid in [(tab_geo, "geo"), (tab_paper, "ai_papers"), (tab_creator, "creators")]:
+        for tab, mid in [(tab_geo, "geo"), (tab_tech, "ai_tech"), (tab_product, "ai_product")]:
             with tab:
                 mod_b = db.get_briefing(today_str, module=mid)
                 if mod_b:
@@ -80,6 +80,8 @@ def render_workbench(db):
                         break
             else:
                 st.info("暂无历史早报")
+
+        _render_grok_import(db)
 
     else:
         st.markdown(
@@ -108,25 +110,31 @@ def render_workbench(db):
                         st.success(f"GEO: 新增 {stats['new_saved']} / 总 {stats['total_fetched']}")
 
             with sc2:
-                if st.button("抓取论文", use_container_width=True, key="wb_paper"):
-                    with st.spinner("抓取 AI 论文..."):
+                if st.button("抓取 AI技术", use_container_width=True, key="wb_tech"):
+                    with st.spinner("抓取 AI 技术前沿..."):
                         from scrapers.rss_scraper import RSSScraper
                         from processors.content_processor import ContentProcessor
                         items = []
                         try:
                             from scrapers.arxiv_scraper import ArxivScraper
-                            items = ArxivScraper(module="ai_papers").fetch_all(verbose=False)
+                            items = ArxivScraper(module="ai_tech").fetch_all(verbose=False)
                         except ImportError:
                             pass
-                        rss = RSSScraper(module="ai_papers")
+                        try:
+                            from scrapers.youtube_scraper import YouTubeScraper
+                            items.extend(YouTubeScraper(module="ai_tech").fetch_all(verbose=False))
+                        except Exception:
+                            pass
+                        rss = RSSScraper(module="ai_tech")
                         items.extend(rss.fetch_all(verbose=False))
-                        proc = ContentProcessor(db, module="ai_papers")
+                        proc = ContentProcessor(db, module="ai_tech")
                         stats = proc.process_and_save(items)
-                        st.success(f"论文: 新增 {stats['new_saved']} / 总 {stats['total_fetched']}")
+                        st.success(f"AI技术: 新增 {stats['new_saved']} / 总 {stats['total_fetched']}")
 
             with sc3:
-                if st.button("抓取博主/Twitter", use_container_width=True, key="wb_creator"):
-                    with st.spinner("抓取博主和 Twitter..."):
+                if st.button("抓取 AI产品", use_container_width=True, key="wb_product"):
+                    with st.spinner("抓取 AI 产品 & 策略..."):
+                        from scrapers.rss_scraper import RSSScraper
                         from processors.content_processor import ContentProcessor
                         items = []
                         try:
@@ -134,18 +142,17 @@ def render_workbench(db):
                             items.extend(YouTubeScraper().fetch_all(verbose=False))
                         except Exception:
                             pass
-                        try:
-                            from scrapers.twitter_scraper import TwitterScraper
-                            items.extend(TwitterScraper().fetch_all(verbose=False))
-                        except Exception:
-                            pass
-                        proc = ContentProcessor(db, module="creators")
+                        rss = RSSScraper(module="ai_product")
+                        items.extend(rss.fetch_all(verbose=False))
+                        proc = ContentProcessor(db, module="ai_product")
                         stats = proc.process_and_save(items)
-                        st.success(f"博主: 新增 {stats['new_saved']} / 总 {stats['total_fetched']}")
+                        st.success(f"AI产品: 新增 {stats['new_saved']} / 总 {stats['total_fetched']}")
 
             for mid, meta in MODULE_META.items():
                 unused = len(db.get_unused_content(mid, limit=999))
                 st.caption(f"{meta['label']}：{unused} 条待使用")
+
+        _render_grok_import(db)
 
         if st.button("生成今日统一早报", type="primary",
                       use_container_width=True, key="wb_gen_unified"):
@@ -326,3 +333,68 @@ def render_workbench(db):
                     if "wb_ans_unified" in st.session_state:
                         del st.session_state["wb_ans_unified"]
                     st.rerun()
+
+
+def _render_grok_import(db):
+    """渲染 Grok 简报导入区域"""
+    from scrapers.grok_importer import parse_grok_markdown
+    from processors.content_processor import ContentProcessor
+
+    with st.expander("📋 导入 Grok 简报", expanded=False):
+        st.caption("粘贴 Grok 生成的 Markdown 简报，一键导入到知识库")
+
+        grok_text = st.text_area(
+            "Grok 简报内容",
+            height=250,
+            placeholder="在这里粘贴 Grok 输出的 Markdown 简报...\n\n"
+                        "例如:\n"
+                        "AI 情报简报 | 2026-02-24\n"
+                        "📌 今日一句话：...\n"
+                        "🔍 AI 搜索 & GEO\n"
+                        "...",
+            key="wb_grok_input",
+            label_visibility="collapsed",
+        )
+
+        if st.button("导入", type="primary", use_container_width=True,
+                      key="wb_grok_import"):
+            if not grok_text or len(grok_text.strip()) < 50:
+                st.warning("内容太短，请粘贴完整的 Grok 简报")
+            else:
+                with st.spinner("解析并导入中..."):
+                    result = parse_grok_markdown(grok_text)
+                    items = result["items"]
+
+                    if not items:
+                        st.warning("未能解析出任何条目，请检查格式")
+                    else:
+                        total_new = 0
+                        module_stats = {}
+                        for module_id in ["geo", "ai_tech", "ai_product"]:
+                            mod_items = [it for it in items if it["module"] == module_id]
+                            if not mod_items:
+                                continue
+                            proc = ContentProcessor(db, module=module_id)
+                            stats = proc.process_and_save(mod_items)
+                            total_new += stats["new_saved"]
+                            module_stats[module_id] = stats["new_saved"]
+
+                        counts = result["section_counts"]
+                        detail = " · ".join(
+                            f"{MODULE_META.get(m, {}).get('label', m)} {c}条"
+                            for m, c in counts.items()
+                        )
+
+                        if result["highlight"]:
+                            st.info(f"📌 {result['highlight']}")
+
+                        st.success(
+                            f"导入完成！解析 {len(items)} 条（{detail}），"
+                            f"新增 {total_new} 条入库"
+                        )
+
+                        db.log_activity(
+                            "grok_import", 5,
+                            f"导入 Grok 简报: {len(items)} 条, 新增 {total_new}",
+                            "geo",
+                        )

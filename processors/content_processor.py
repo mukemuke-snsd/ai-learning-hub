@@ -28,6 +28,7 @@ class ContentProcessor:
             "duplicates": 0,
             "low_relevance": 0,
         }
+        items = self._dedup_by_title(items)
         for item in items:
             if item.get("relevance_score", 0) < self.min_score:
                 stats["low_relevance"] += 1
@@ -38,6 +39,36 @@ class ContentProcessor:
             else:
                 stats["duplicates"] += 1
         return stats
+
+    @staticmethod
+    def _normalize_title(title: str) -> str:
+        """将标题归一化用于去重比较"""
+        import re
+        t = title.lower().strip()
+        t = re.sub(r'[^\w\s]', '', t)
+        t = re.sub(r'\s+', ' ', t)
+        return t
+
+    def _dedup_by_title(self, items: list) -> list:
+        """批内标题去重：相似标题只保留相关度最高的一条"""
+        seen = {}
+        for item in items:
+            norm = self._normalize_title(item.get("title", ""))
+            if not norm or len(norm) < 10:
+                key = item.get("url", id(item))
+            else:
+                key = norm[:60]
+            existing = seen.get(key)
+            if existing is None:
+                seen[key] = item
+            else:
+                if item.get("relevance_score", 0) > existing.get("relevance_score", 0):
+                    seen[key] = item
+        deduped = list(seen.values())
+        removed = len(items) - len(deduped)
+        if removed > 0:
+            log.info("标题去重: 移除 %d 条重复内容", removed)
+        return deduped
 
     def get_daily_articles(self) -> list:
         return self.db.get_unused_content(

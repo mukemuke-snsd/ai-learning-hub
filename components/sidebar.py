@@ -8,8 +8,8 @@ from styles.icons import icon
 
 MODULE_META = {
     "geo": {"icon": "globe", "label": "GEO"},
-    "ai_papers": {"icon": "file-text", "label": "论文"},
-    "creators": {"icon": "video", "label": "博主"},
+    "ai_tech": {"icon": "cpu", "label": "AI技术"},
+    "ai_product": {"icon": "rocket", "label": "AI产品"},
 }
 
 

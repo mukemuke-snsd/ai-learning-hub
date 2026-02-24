@@ -1,4 +1,4 @@
-"""arXiv 论文抓取器 - 支持多模块（ai_papers / geo）"""
+"""arXiv 论文抓取器 - 支持多模块（ai_tech / geo）"""
 
 import time
 from datetime import datetime
@@ -17,7 +17,7 @@ except ImportError:
 class ArxivScraper(BaseScraper):
     """arXiv 论文抓取器，支持 module 参数加载不同关键词"""
 
-    def __init__(self, module: str = "ai_papers"):
+    def __init__(self, module: str = "ai_tech"):
         self.module = module
         self.module_cfg = load_module_config(module)
         settings = load_settings()
@@ -38,7 +38,7 @@ class ArxivScraper(BaseScraper):
         all_papers = []
 
         high_kw = self.keywords.get("high_relevance", [])
-        search_queries = high_kw[:5]
+        search_queries = high_kw[:3]
 
         for query in search_queries:
             if verbose:

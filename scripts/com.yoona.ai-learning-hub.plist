@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.yoona.ai-learning-hub</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/yoona/Desktop/工作/Project Management/ai-learning-hub/scripts/run_daily.sh</string>
+    </array>
+
+    <!-- 每天早上 7:00 执行；如果电脑当时处于睡眠状态，醒来后会补执行 -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>7</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/Users/yoona/Desktop/工作/Project Management/ai-learning-hub/data/launchd_stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/yoona/Desktop/工作/Project Management/ai-learning-hub/data/launchd_stderr.log</string>
+</dict>
+</plist>

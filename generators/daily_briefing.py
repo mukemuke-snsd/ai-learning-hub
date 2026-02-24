@@ -14,17 +14,17 @@ MODULE_PROMPTS = {
         "domain": "GEO / AI 搜索优化",
         "tags_hint": "AI Search, SEO, GEO, LLM, Perplexity, SGE",
     },
-    "ai_papers": {
-        "role": "AI 前沿研究解读专家，擅长将学术论文翻译为产品经理可理解的语言",
-        "focus": "最具突破性的技术进展、对产品和行业的潜在影响",
-        "domain": "AI 前沿技术",
-        "tags_hint": "LLM, Transformer, RLHF, Agent, Multimodal, RAG",
+    "ai_tech": {
+        "role": "AI 前沿技术解读专家，擅长将学术论文和技术博客翻译为产品经理可理解的语言",
+        "focus": "最具突破性的技术进展、LLM/Agent/RAG 新范式、对产品和行业的潜在影响",
+        "domain": "AI 技术前沿",
+        "tags_hint": "LLM, Transformer, RLHF, Agent, Multimodal, RAG, Evals, MCP",
     },
-    "creators": {
-        "role": "产品经理 AI 学习教练，擅长从博主内容中提炼可落地的方法论",
-        "focus": "最新的 AI 产品实践、工具用法、思维模型和可复用方法论",
-        "domain": "产品经理 + AI",
-        "tags_hint": "AI产品, 增长, 工具, 方法论, PMF, 用户体验",
+    "ai_product": {
+        "role": "AI 产品策略专家，擅长从行业内容中提炼可落地的产品方法论和增长策略",
+        "focus": "最新的 AI 产品实践、增长策略、商业化洞察和可复用方法论",
+        "domain": "AI 产品 & 策略",
+        "tags_hint": "AI产品, PM, 增长, GTM, PMF, AI UX, Vibe Coding, 工具",
     },
 }
 
@@ -275,6 +275,13 @@ class DailyBriefingGenerator:
         self._save_to_file(target_date, content)
         return content
 
+    GEO_CROSS_KEYWORDS = [
+        "ai search", "perplexity", "ai overview", "ai overviews",
+        "sge", "chatgpt search", "bing copilot", "generative search",
+        "ai citation", "ai visibility", "geo", "search generative",
+        "generative engine", "zero-click",
+    ]
+
     def generate_unified(self, target_date: str = None) -> str:
         """生成跨模块统一早报 — 合并三模块高质量内容"""
         if not target_date:
@@ -283,12 +290,19 @@ class DailyBriefingGenerator:
         from processors.content_processor import ContentProcessor
 
         all_items = []
-        for mid in ["geo", "ai_papers", "creators"]:
+        for mid in ["geo", "ai_tech", "ai_product"]:
             proc = ContentProcessor(self.db, module=mid)
             items = proc.get_daily_articles()
             for item in items:
                 item["_module"] = mid
             all_items.extend(items)
+
+        # GEO 跨模块回流：其他模块中命中 GEO 关键词的内容也标记为 GEO 相关
+        for item in all_items:
+            if item["_module"] != "geo":
+                text = f"{item.get('title', '')} {item.get('summary', '')}".lower()
+                if any(kw in text for kw in self.GEO_CROSS_KEYWORDS):
+                    item["_geo_related"] = True
 
         all_items.sort(
             key=lambda x: (
@@ -298,20 +312,22 @@ class DailyBriefingGenerator:
             reverse=True,
         )
 
-        top_items = all_items[:15]
+        top_items = all_items[:10]
 
         if not top_items:
             return self.generate_no_articles(target_date)
 
-        sections = {"geo": [], "ai_papers": [], "creators": []}
+        sections = {"geo": [], "ai_tech": [], "ai_product": []}
         for item in top_items:
             mod = item.get("_module", "geo")
             sections.setdefault(mod, []).append(item)
+            if item.get("_geo_related") and mod != "geo":
+                sections["geo"].append(item)
 
         items_text_parts = []
         mod_labels = {
-            "geo": "GEO 资讯", "ai_papers": "AI 论文",
-            "creators": "博主/Twitter",
+            "geo": "GEO 资讯", "ai_tech": "AI 技术前沿",
+            "ai_product": "AI 产品 & 策略",
         }
         for mod, label in mod_labels.items():
             items_in_mod = sections.get(mod, [])
@@ -336,7 +352,7 @@ class DailyBriefingGenerator:
 
         system_prompt = (
             "你是一位顶级 AI 行业分析师和 newsletter 作者。\n"
-            "你的任务是将来自三个模块（GEO 资讯、AI 论文、博主/Twitter）"
+            "你的任务是将来自三个模块（GEO 资讯、AI 技术前沿、AI 产品 & 策略）"
             "的最新内容合并为一份高质量的每日统一早报。\n\n"
             "风格要求：\n"
             "1. 使用中文输出，Markdown 格式\n"
@@ -350,7 +366,7 @@ class DailyBriefingGenerator:
         user_prompt = f"""请将以下跨模块内容合并为统一的每日早报。
 
 📅 日期：{target_date}
-📊 今日内容：GEO {len(sections.get('geo', []))} 条 | 论文 {len(sections.get('ai_papers', []))} 条 | 博主/Twitter {len(sections.get('creators', []))} 条
+📊 今日内容：GEO {len(sections.get('geo', []))} 条 | AI技术 {len(sections.get('ai_tech', []))} 条 | AI产品 {len(sections.get('ai_product', []))} 条
 
 ---
 {items_text}
@@ -363,10 +379,10 @@ class DailyBriefingGenerator:
 ---
 
 ### 🔥 今日核心速览
-（从所有模块中挑选 3-5 条最重要的，按优先级排序，每条格式：）
+（从所有模块中挑选 3-5 条最重要的，按优先级排序。注意：总条目控制在 7-10 条以内，确保 30 分钟内读完。每条格式：）
 
 1. **[核心观点/事件]**
-   - 来源: [来源] | 模块: [GEO/论文/博主] | 优先级: 高/中
+   - 来源: [来源] | 模块: [GEO/AI技术/AI产品] | 优先级: 高/中
    - 标签: [关键词标签]
    - 为什么重要: [一句话]
    - 可落地启发: [一句话]
@@ -379,10 +395,10 @@ class DailyBriefingGenerator:
 - **[GEO 角度]**: ...
   - 核心逻辑 + 可应用场景
 
-- **[论文角度]**: ...
+- **[AI技术角度]**: ...
   - 核心逻辑 + 可应用场景
 
-- **[博主洞察]**: ...
+- **[AI产品洞察]**: ...
   - 核心逻辑 + 可应用场景
 
 ---
@@ -418,6 +434,7 @@ class DailyBriefingGenerator:
         content = self.ai.generate(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
+            use_advanced=True,
             max_tokens=4000,
         )
 
