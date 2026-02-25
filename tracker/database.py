@@ -46,8 +46,17 @@ class Database:
         placeholder = "%s" if self.use_postgres else "?"
         return ", ".join([placeholder] * count)
 
+    def _reconnect_postgres(self):
+        """重新建立 Postgres 连接（用于连接被服务端关闭的情况）"""
+        try:
+            self.conn.close()
+        except Exception:
+            pass
+        self.conn = psycopg2.connect(self.database_url)
+        self.conn.autocommit = False
+
     def _execute(self, sql: str, params: tuple = ()):
-        """执行 SQL，自动处理游标类型。Postgres 模式下自动恢复失败事务。"""
+        """执行 SQL，自动处理游标类型。Postgres 模式下自动恢复失败事务和断开连接。"""
         if self.use_postgres:
             try:
                 cursor = self.conn.cursor(
@@ -55,8 +64,18 @@ class Database:
                 )
                 cursor.execute(sql, params)
                 return cursor
+            except (psycopg2.InterfaceError, psycopg2.OperationalError):
+                self._reconnect_postgres()
+                cursor = self.conn.cursor(
+                    cursor_factory=psycopg2.extras.RealDictCursor
+                )
+                cursor.execute(sql, params)
+                return cursor
             except Exception:
-                self.conn.rollback()
+                try:
+                    self.conn.rollback()
+                except (psycopg2.InterfaceError, psycopg2.OperationalError):
+                    self._reconnect_postgres()
                 cursor = self.conn.cursor(
                     cursor_factory=psycopg2.extras.RealDictCursor
                 )
