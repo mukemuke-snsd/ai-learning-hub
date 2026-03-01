@@ -677,8 +677,47 @@ html, body {
 }
 
 /* ================================================
-   SIDEBAR COLLAPSE BUTTON FIX — Replace Material Icon with SVG
+   EXPANDER TOGGLE ICON — Hide Material Icon text leakage
    ================================================ */
+[data-testid="stExpander"] details summary .material-symbols-rounded,
+[data-testid="stExpander"] summary > span.material-symbols-rounded,
+[data-testid="stExpander"] summary svg + span,
+[data-testid="stExpander"] details > summary > span:first-child {
+    font-size: 0 !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    overflow: hidden !important;
+    width: 1.2em !important;
+    display: inline-block !important;
+}
+[data-testid="stExpander"] details[open] > summary > span:first-child::before,
+[data-testid="stExpander"] details:not([open]) > summary > span:first-child::before {
+    content: "" !important;
+    display: inline-block !important;
+    width: 14px !important;
+    height: 14px !important;
+    vertical-align: middle !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+}
+[data-testid="stExpander"] details:not([open]) > summary > span:first-child::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E") !important;
+}
+[data-testid="stExpander"] details[open] > summary > span:first-child::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") !important;
+}
+
+/* ================================================
+   SIDEBAR COLLAPSE BUTTON FIX — Hide Material Icon text leakage
+   ================================================ */
+[data-testid="stSidebarCollapseButton"],
+[data-testid="collapsedControl"],
+[data-testid="stSidebarCollapsedControl"] {
+    font-size: 0 !important;
+    color: transparent !important;
+    overflow: hidden !important;
+}
 [data-testid="stSidebarCollapseButton"] button,
 [data-testid="collapsedControl"] button,
 [data-testid="stSidebarCollapsedControl"] button {
@@ -688,7 +727,6 @@ html, body {
     color: transparent !important;
     font-size: 0 !important;
     line-height: 0 !important;
-    visibility: hidden !important;
     width: 32px !important;
     height: 32px !important;
     min-width: 32px !important;
@@ -696,11 +734,23 @@ html, body {
     position: relative !important;
     overflow: hidden !important;
 }
-[data-testid="stSidebarCollapseButton"] button *,
-[data-testid="collapsedControl"] button *,
-[data-testid="stSidebarCollapsedControl"] button * {
-    display: none !important;
+[data-testid="stSidebarCollapseButton"] button span,
+[data-testid="collapsedControl"] button span,
+[data-testid="stSidebarCollapsedControl"] button span,
+[data-testid="stSidebarCollapseButton"] button [data-testid],
+[data-testid="collapsedControl"] button [data-testid],
+[data-testid="stSidebarCollapsedControl"] button [data-testid],
+[data-testid="stSidebarCollapseButton"] .material-symbols-rounded,
+[data-testid="collapsedControl"] .material-symbols-rounded,
+[data-testid="stSidebarCollapsedControl"] .material-symbols-rounded {
+    font-size: 0 !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
     visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
 }
 [data-testid="stSidebarCollapseButton"] button::before,
 [data-testid="collapsedControl"] button::before,
