@@ -6,26 +6,25 @@ from datetime import date
 from scrapers.base_scraper import BaseScraper
 
 SECTION_MODULE_MAP = {
-    "ai 搜索": "geo",
-    "geo": "geo",
-    "ai 产品": "ai_product",
-    "产品": "ai_product",
-    "pm": "ai_product",
-    "vibe coding": "ai_product",
-    "ai 工具": "ai_product",
-    "工具": "ai_product",
-    "ai 技术": "ai_tech",
-    "技术前沿": "ai_tech",
-    "技术": "ai_tech",
-    "ai 行业": "ai_tech",
-    "行业动态": "ai_tech",
-    "行业": "ai_tech",
+    "ai 搜索": "product_radar",
+    "geo": "product_radar",
+    "ai 产品": "product_radar",
+    "产品": "product_radar",
+    "pm": "product_radar",
+    "vibe coding": "product_radar",
+    "ai 工具": "product_radar",
+    "工具": "product_radar",
+    "ai 技术": "research_lab",
+    "技术前沿": "research_lab",
+    "技术": "research_lab",
+    "ai 行业": "product_radar",
+    "行业动态": "product_radar",
+    "行业": "product_radar",
 }
 
 SECTION_CATEGORY_MAP = {
-    "geo": "grok_geo",
-    "ai_product": "grok_product",
-    "ai_tech": "grok_tech",
+    "product_radar": "grok_radar",
+    "research_lab": "grok_research",
 }
 
 
@@ -35,7 +34,7 @@ def _detect_module(section_title: str) -> str:
     for keyword, module in SECTION_MODULE_MAP.items():
         if keyword in title_lower:
             return module
-    return "ai_tech"
+    return "product_radar"
 
 
 def _extract_urls(text: str) -> list:

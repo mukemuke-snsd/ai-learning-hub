@@ -38,7 +38,7 @@ def load_module_config(module_id: str) -> dict:
 def load_all_module_configs() -> dict:
     """加载所有已启用模块的配置"""
     settings = load_settings()
-    enabled = settings.get("modules", ["geo", "ai_tech", "ai_product"])
+    enabled = settings.get("modules", ["product_radar", "research_lab"])
     configs = {}
     for mid in enabled:
         try:
@@ -58,9 +58,9 @@ def get_module_keywords(module_id: str) -> dict:
     return cfg.get("keywords", {})
 
 
-# 兼容旧接口：load_sources 返回 geo 模块配置
+# 兼容旧接口：load_sources 返回 product_radar 模块配置
 def load_sources() -> dict:
-    return load_module_config("geo")
+    return load_module_config("product_radar")
 
 
 def get_data_path(subdir: str = "") -> Path:

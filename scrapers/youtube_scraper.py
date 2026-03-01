@@ -21,7 +21,7 @@ except ImportError:
 class YouTubeScraper(BaseScraper):
     """YouTube 频道内容抓取器"""
 
-    def __init__(self, module: str = "ai_product",
+    def __init__(self, module: str = "product_radar",
                  fetch_transcripts: bool = True):
         self.module = module
         self.fetch_transcripts = fetch_transcripts

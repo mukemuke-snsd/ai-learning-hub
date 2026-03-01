@@ -12,7 +12,7 @@ AI Learning Hub - 统一 AI 学习助手
     python main.py progress          查看学习进度
     python main.py search <关键词>   搜索知识库
 
-模块: geo / ai_tech / ai_product (默认 geo)
+模块: product_radar / research_lab (默认 product_radar)
 """
 
 import sys
@@ -36,9 +36,8 @@ from tracker.progress import ProgressTracker
 console = Console()
 
 MODULE_NAMES = {
-    "geo": "GEO 学习",
-    "ai_tech": "AI 技术前沿",
-    "ai_product": "AI 产品 & 策略",
+    "product_radar": "产品雷达",
+    "research_lab": "研究前沿",
 }
 
 
@@ -46,52 +45,36 @@ def get_module(args: list) -> str:
     for a in args:
         if a in MODULE_NAMES:
             return a
-    return "geo"
+    return "product_radar"
 
 
 def cmd_fetch(db: Database, module: str):
     name = MODULE_NAMES.get(module, module)
     console.print(f"\n[bold cyan]📡 开始抓取 {name} 资讯...[/bold cyan]\n")
 
-    if module == "ai_product":
-        items = []
-        try:
-            from scrapers.youtube_scraper import YouTubeScraper
-            yt = YouTubeScraper()
-            items.extend(yt.fetch_all(verbose=True))
-        except ImportError:
-            console.print("[yellow]youtube_transcript_api 未安装，跳过 YouTube[/yellow]")
-        rss = RSSScraper(module=module)
-        items.extend(rss.fetch_all(verbose=True))
-        processor = ContentProcessor(db, module=module)
-        stats = processor.process_and_save(items)
-        _print_stats(stats)
-        return stats
-    elif module == "ai_tech":
-        items = []
+    items = []
+
+    if module == "research_lab":
         try:
             from scrapers.arxiv_scraper import ArxivScraper
-            scraper = ArxivScraper(module="ai_tech")
-            items = scraper.fetch_all(verbose=True)
+            scraper = ArxivScraper(module=module)
+            arxiv_items = scraper.fetch_all(verbose=True)
+            items.extend(arxiv_items)
         except ImportError:
             console.print("[yellow]arxiv 包未安装，跳过 arXiv[/yellow]")
-        try:
-            from scrapers.youtube_scraper import YouTubeScraper
-            items.extend(YouTubeScraper(module="ai_tech").fetch_all(verbose=True))
-        except ImportError:
-            console.print("[yellow]youtube_transcript_api 未安装，跳过 YouTube[/yellow]")
-        rss = RSSScraper(module=module)
-        items.extend(rss.fetch_all(verbose=True))
-        processor = ContentProcessor(db, module=module)
-        stats = processor.process_and_save(items)
-        _print_stats(stats)
-        return stats
-    else:
-        scraper = RSSScraper(module=module)
 
-    articles = scraper.fetch_all(verbose=True)
+    try:
+        from scrapers.youtube_scraper import YouTubeScraper
+        yt = YouTubeScraper(module=module, fetch_transcripts=False)
+        items.extend(yt.fetch_all(verbose=True))
+    except ImportError:
+        console.print("[yellow]youtube_transcript_api 未安装，跳过 YouTube[/yellow]")
+
+    rss = RSSScraper(module=module)
+    items.extend(rss.fetch_all(verbose=True))
+
     processor = ContentProcessor(db, module=module)
-    stats = processor.process_and_save(articles)
+    stats = processor.process_and_save(items)
     _print_stats(stats)
     return stats
 
@@ -229,7 +212,8 @@ def cmd_search(db: Database, keyword: str):
     results = db.search_knowledge(keyword)
     if results:
         for item in results:
-            mod = {"geo": "GEO", "ai_tech": "AI技术",
+            mod = {"product_radar": "产品雷达", "research_lab": "研究前沿",
+                   "geo": "GEO", "ai_tech": "AI技术",
                    "ai_product": "AI产品"}.get(item.get("module", ""), "")
             console.print(Panel(
                 f"**[{mod}] {item['topic']}** [{item.get('category', '')}]\n\n"
@@ -284,7 +268,7 @@ def main():
             "  [cyan]python main.py monthly[/cyan]            跨模块月度总结\n"
             "  [cyan]python main.py progress[/cyan]           学习进度\n"
             "  [cyan]python main.py search <关键词>[/cyan]    搜索知识库\n\n"
-            "模块: geo / ai_tech / ai_product (默认 geo)",
+            "模块: product_radar / research_lab (默认 product_radar)",
             title="📚 使用帮助",
             border_style="blue",
         ))

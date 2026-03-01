@@ -55,6 +55,5 @@ start_date: "2026-02-17"
 
 # 启用的模块
 modules:
-  - "geo"
-  - "ai_tech"
-  - "ai_product"
+  - "product_radar"
+  - "research_lab"

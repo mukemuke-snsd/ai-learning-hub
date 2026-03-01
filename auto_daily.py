@@ -2,12 +2,12 @@
 """
 每日自动任务 - 适用于 cron / launchd 定时执行
 ================================================
-流程：抓取三模块 → AI 富化 → 生成统一跨模块早报
+流程：抓取两模块（产品雷达 + 研究前沿） → AI 富化 → 生成统一跨模块早报
 
 用法:
-    python3 auto_daily.py           # 自动判断工作日/周末
-    python3 auto_daily.py geo       # 只抓取指定模块（不生成统一早报）
-    python3 auto_daily.py --weekly  # 强制包含中频源
+    python3 auto_daily.py                  # 自动判断工作日/周末
+    python3 auto_daily.py product_radar    # 只抓取指定模块（不生成统一早报）
+    python3 auto_daily.py --weekly         # 强制包含中频源
 """
 
 import sys
@@ -30,7 +30,7 @@ logging.basicConfig(
 )
 log = logging.getLogger("auto_daily")
 
-ALL_MODULES = ["geo", "ai_tech", "ai_product"]
+ALL_MODULES = ["product_radar", "research_lab"]
 
 
 def _log_health(module: str, rss_scraper):
@@ -54,58 +54,39 @@ def fetch_module(db, module: str, include_weekly: bool = False):
     from scrapers.rss_scraper import RSSScraper
     from processors.content_processor import ContentProcessor
 
-    if module == "ai_product":
-        items = []
-        try:
-            from scrapers.youtube_scraper import YouTubeScraper
-            scraper = YouTubeScraper(fetch_transcripts=False)
-            items.extend(scraper.fetch_all(verbose=False))
-        except ImportError:
-            log.warning("[ai_product] youtube_transcript_api 未安装，跳过 YouTube")
+    items = []
 
-        rss = RSSScraper(module=module)
-        rss_items = rss.fetch_all(verbose=False)
-        items.extend(rss_items)
-        log.info("[ai_product] RSS 获取 %d 条内容", len(rss_items))
-        _log_health(module, rss)
-
-        processor = ContentProcessor(db, module=module)
-        return processor.process_and_save(items)
-
-    if module == "ai_tech":
-        items = []
+    if module == "research_lab":
         try:
             from scrapers.arxiv_scraper import ArxivScraper
-            scraper = ArxivScraper(module="ai_tech")
-            items = scraper.fetch_all(verbose=False)
+            scraper = ArxivScraper(module=module)
+            arxiv_items = scraper.fetch_all(verbose=False)
+            items.extend(arxiv_items)
+            log.info("[%s] arXiv 获取 %d 条内容", module, len(arxiv_items))
         except ImportError:
-            log.warning("[ai_tech] arxiv 包未安装，跳过 arXiv")
+            log.warning("[%s] arxiv 包未安装，跳过 arXiv", module)
 
-        try:
-            from scrapers.youtube_scraper import YouTubeScraper
-            yt = YouTubeScraper(module="ai_tech", fetch_transcripts=False)
-            yt_items = yt.fetch_all(verbose=False)
-            items.extend(yt_items)
-            log.info("[ai_tech] YouTube 获取 %d 条内容", len(yt_items))
-        except ImportError:
-            log.warning("[ai_tech] youtube_transcript_api 未安装，跳过 YouTube")
+    try:
+        from scrapers.youtube_scraper import YouTubeScraper
+        yt = YouTubeScraper(module=module, fetch_transcripts=False)
+        yt_items = yt.fetch_all(verbose=False)
+        items.extend(yt_items)
+        log.info("[%s] YouTube 获取 %d 条内容", module, len(yt_items))
+    except ImportError:
+        log.warning("[%s] youtube_transcript_api 未安装，跳过 YouTube", module)
 
-        rss = RSSScraper(module=module)
-        items.extend(rss.fetch_all(verbose=False))
-        _log_health(module, rss)
-        processor = ContentProcessor(db, module=module)
-        return processor.process_and_save(items)
-
-    # GEO: 分层抓取（纯 RSS，arXiv 已移至 ai_tech）
-    scraper = RSSScraper(module=module)
+    rss = RSSScraper(module=module)
     log.info("[%s] 抓取高频源 (daily)...", module)
-    items = scraper.fetch_all(verbose=False, frequency="daily")
+    rss_items = rss.fetch_all(verbose=False, frequency="daily")
 
     if include_weekly:
         log.info("[%s] 抓取中频源 (weekly)...", module)
-        items.extend(scraper.fetch_all(verbose=False, frequency="weekly"))
+        rss_items.extend(rss.fetch_all(verbose=False, frequency="weekly"))
 
-    _log_health(module, scraper)
+    items.extend(rss_items)
+    log.info("[%s] RSS 获取 %d 条内容", module, len(rss_items))
+    _log_health(module, rss)
+
     processor = ContentProcessor(db, module=module)
     return processor.process_and_save(items)
 
@@ -133,7 +114,7 @@ def generate_unified_briefing(db, today_str: str):
         return
 
     log.info("生成统一跨模块早报...")
-    generator = DailyBriefingGenerator(db, module="geo")
+    generator = DailyBriefingGenerator(db, module="product_radar")
     generator.generate_unified(today_str)
     log.info("统一早报生成完成 ✅")
 

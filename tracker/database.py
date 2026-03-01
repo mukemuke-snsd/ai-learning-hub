@@ -446,7 +446,7 @@ class Database:
             return False
 
     def save_article(self, article: dict) -> bool:
-        article.setdefault("module", "geo")
+        article.setdefault("module", "product_radar")
         article.setdefault("content_type", "article")
         article.setdefault("platform", "rss")
         return self.save_content_item(article)
@@ -465,7 +465,7 @@ class Database:
 
     def get_unused_articles(self, limit: int = 15,
                             min_score: float = 0.3) -> list:
-        return self.get_unused_content("geo", limit, min_score)
+        return self.get_unused_content("product_radar", limit, min_score)
 
     def update_enrichment(self, item_id: int, core_conclusion: str,
                           actionable_insight: str, ai_quality_score: float):

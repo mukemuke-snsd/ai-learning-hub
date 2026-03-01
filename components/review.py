@@ -47,7 +47,7 @@ def render_review(db):
     with k4:
         total_content = sum(
             len(db.get_content_by_module(m, limit=9999))
-            for m in ["geo", "ai_tech", "ai_product"]
+            for m in ["product_radar", "research_lab"]
         )
         k4.metric("内容总量", f"{total_content} 条")
 
@@ -84,7 +84,8 @@ def render_review(db):
             scores_df = pd.DataFrame(all_scores)
             scores_df["date"] = pd.to_datetime(scores_df["date"])
             scores_df["module_label"] = scores_df["module"].map(
-                {"geo": "GEO", "ai_tech": "AI技术", "ai_product": "AI产品"}
+                {"product_radar": "产品雷达", "research_lab": "研究前沿",
+                 "geo": "GEO", "ai_tech": "AI技术", "ai_product": "AI产品"}
             )
             chart_df = scores_df.pivot_table(
                 index="date", columns="module_label", values="score", aggfunc="mean"
@@ -228,8 +229,13 @@ def render_review(db):
         """)
         high_value = db._fetchall_as_dicts(cursor)
 
-        module_labels = {"geo": "GEO", "ai_tech": "AI技术", "ai_product": "AI产品"}
+        module_labels = {
+            "product_radar": "产品雷达", "research_lab": "研究前沿",
+            "geo": "GEO", "ai_tech": "AI技术", "ai_product": "AI产品",
+        }
         module_pills = {
+            "product_radar": '<span class="pill-geo">产品雷达</span>',
+            "research_lab": '<span class="pill-paper">研究前沿</span>',
             "geo": '<span class="pill-geo">GEO</span>',
             "ai_tech": '<span class="pill-paper">AI技术</span>',
             "ai_product": '<span class="pill-creator">AI产品</span>',

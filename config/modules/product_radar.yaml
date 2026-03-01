@@ -1,0 +1,191 @@
+# 产品雷达模块 — 工作直接相关的行业信息
+# GEO / AI 产品 / 增长 / 工具链
+
+module_name: "产品雷达"
+module_id: "product_radar"
+description: "追踪 GEO、AI 产品动态、增长工具和行业信号，为每日工作决策提供信息支撑"
+
+# =============================================
+# Focus Topics — 跨模块学习主线（boost 加权）
+# =============================================
+
+focus_topics:
+  geo:
+    label: "GEO"
+    keywords:
+      - "GEO"
+      - "generative engine optimization"
+      - "AI search"
+      - "AI overview"
+      - "AI overviews"
+      - "AI citation"
+      - "llms.txt"
+      - "perplexity"
+      - "ChatGPT search"
+      - "generative search"
+      - "zero-click"
+      - "AI visibility"
+      - "schema markup"
+      - "structured data"
+      - "content optimization for AI"
+      - "answer engine"
+    boost: 2.0
+
+  ai_agent:
+    label: "AI Agent"
+    keywords:
+      - "AI agent"
+      - "agentic"
+      - "multi-agent"
+      - "MCP"
+      - "model context protocol"
+      - "tool use"
+      - "agent economy"
+      - "agent-native"
+      - "Claude Code"
+      - "autonomous agent"
+      - "agent workflow"
+      - "agent orchestration"
+      - "Cowork"
+      - "plugin"
+    boost: 2.0
+
+# =============================================
+# RSS 信息源
+# =============================================
+
+rss_feeds:
+  # ----- 每日动态 — GEO/SEO 核心 -----
+  - name: "Search Engine Land"
+    url: "https://searchengineland.com/feed"
+    category: "geo_core"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  - name: "Search Engine Journal"
+    url: "https://www.searchenginejournal.com/feed/"
+    category: "geo_core"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  - name: "Google Search Central Blog"
+    url: "https://developers.google.com/search/blog/feed.xml"
+    category: "official"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  # ----- 每日动态 — AI 产品/工具 -----
+  - name: "Simon Willison's Blog"
+    url: "https://simonwillison.net/atom/everything/"
+    category: "llm_practice"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  - name: "TechCrunch AI"
+    url: "https://techcrunch.com/category/artificial-intelligence/feed/"
+    category: "ai_news"
+    frequency: "daily"
+    priority: 2
+    language: "en"
+
+  # ----- 每周深读 — SEO/GEO 深度 -----
+  - name: "Moz Blog"
+    url: "https://moz.com/blog/feed"
+    category: "seo_geo"
+    frequency: "weekly"
+    priority: 2
+    language: "en"
+
+  - name: "Ahrefs Blog"
+    url: "https://ahrefs.com/blog/feed/"
+    category: "seo_geo"
+    frequency: "weekly"
+    priority: 2
+    language: "en"
+
+  # ----- 每周深读 — AI 产品/PM 方法论 -----
+  - name: "One Useful Thing (Ethan Mollick)"
+    url: "https://www.oneusefulthing.org/feed"
+    category: "ai_practice"
+    frequency: "weekly"
+    priority: 1
+    language: "en"
+
+  - name: "Peter Yang - Creator Economy"
+    url: "https://creatoreconomy.so/feed"
+    category: "ai_pm"
+    frequency: "weekly"
+    priority: 1
+    language: "en"
+
+  - name: "The Pragmatic Engineer"
+    url: "https://newsletter.pragmaticengineer.com/feed"
+    category: "eng_product"
+    frequency: "weekly"
+    priority: 2
+    language: "en"
+
+# =============================================
+# YouTube 频道
+# =============================================
+
+youtube_channels:
+  - name: "Lenny's Podcast"
+    channel_id: "UC6t1O76G0jYXOAoYCm153dA"
+    rss_url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC6t1O76G0jYXOAoYCm153dA"
+    focus: "产品管理 + 增长 + AI"
+    language: "en"
+
+  - name: "Training Data (Sequoia)"
+    channel_id: "UCrjMbP0kknEesTwbsGrjbcA"
+    rss_url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCrjMbP0kknEesTwbsGrjbcA"
+    focus: "Sequoia + AI builder 对话"
+    language: "en"
+
+# =============================================
+# 关键词（用于相关度评分）
+# =============================================
+
+keywords:
+  high_relevance:
+    - "GEO"
+    - "generative engine optimization"
+    - "AI overview"
+    - "AI search"
+    - "AI citation"
+    - "llms.txt"
+    - "AI agent"
+    - "MCP"
+    - "Claude"
+    - "AI product launch"
+    - "B2B AI"
+    - "AI workflow"
+    - "vibe coding"
+    - "agent-native"
+    - "Cursor"
+
+  medium_relevance:
+    - "SEO"
+    - "structured data"
+    - "schema markup"
+    - "content optimization"
+    - "AI tool"
+    - "developer tool"
+    - "SaaS AI"
+    - "product management"
+    - "growth"
+    - "GTM"
+    - "Perplexity"
+    - "ChatGPT search"
+
+  low_relevance:
+    - "digital marketing"
+    - "content marketing"
+    - "web analytics"
+    - "Google update"
+    - "algorithm update"
+    - "startup"

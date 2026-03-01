@@ -15,7 +15,7 @@ from scrapers.base_scraper import BaseScraper
 class RSSScraper(BaseScraper):
     """通用 RSS 抓取器，支持任意模块的 RSS 源"""
 
-    def __init__(self, module: str = "geo"):
+    def __init__(self, module: str = "product_radar"):
         self.module = module
         module_cfg = load_module_config(module)
         settings = load_settings()
@@ -134,7 +134,7 @@ class RSSScraper(BaseScraper):
             except (TypeError, ValueError):
                 pass
 
-        content_type = "paper" if self.module == "ai_tech" else "article"
+        content_type = "paper" if self.module == "research_lab" else "article"
 
         return self.make_content_item(
             module=self.module,

@@ -1,0 +1,196 @@
+# 研究前沿模块 — 学术+技术视野
+# LLM / Agent / RAG / Reasoning / Evals
+
+module_name: "研究前沿"
+module_id: "research_lab"
+description: "跟踪 AI 前沿论文、技术博客和实验成果，保持学术敏锐度和技术判断力"
+
+# =============================================
+# Focus Topics — 跨模块学习主线（boost 加权）
+# =============================================
+
+focus_topics:
+  geo:
+    label: "GEO"
+    keywords:
+      - "GEO"
+      - "generative engine optimization"
+      - "AI search"
+      - "AI overview"
+      - "AI overviews"
+      - "AI citation"
+      - "llms.txt"
+      - "perplexity"
+      - "ChatGPT search"
+      - "generative search"
+      - "zero-click"
+      - "AI visibility"
+      - "schema markup"
+      - "structured data"
+      - "content optimization for AI"
+      - "answer engine"
+    boost: 2.0
+
+  ai_agent:
+    label: "AI Agent"
+    keywords:
+      - "AI agent"
+      - "agentic"
+      - "multi-agent"
+      - "MCP"
+      - "model context protocol"
+      - "tool use"
+      - "agent economy"
+      - "agent-native"
+      - "Claude Code"
+      - "autonomous agent"
+      - "agent workflow"
+      - "agent orchestration"
+      - "Cowork"
+      - "plugin"
+    boost: 2.0
+
+# =============================================
+# arXiv 配置（收紧后）
+# =============================================
+
+arxiv_categories:
+  - "cs.CL"
+  - "cs.AI"
+
+arxiv_search_queries:
+  - "ti:agent AND (ti:LLM OR ti:language model)"
+  - "ti:retrieval augmented generation"
+  - "ti:generative search optimization"
+  - "ti:tool use AND ti:language model"
+  - "ti:reasoning AND (ti:LLM OR ti:large language model)"
+  - "ti:multi-agent AND ti:collaboration"
+
+max_results_per_query: 5
+
+# =============================================
+# RSS 信息源
+# =============================================
+
+rss_feeds:
+  # ----- 官方研究博客 -----
+  - name: "OpenAI Blog"
+    url: "https://openai.com/blog/rss.xml"
+    category: "official_research"
+    frequency: "weekly"
+    priority: 1
+    language: "en"
+
+  - name: "Google AI Blog"
+    url: "https://blog.google/technology/ai/rss/"
+    category: "official_research"
+    frequency: "weekly"
+    priority: 1
+    language: "en"
+
+  - name: "DeepMind Blog"
+    url: "https://deepmind.google/blog/rss.xml"
+    category: "official_research"
+    frequency: "weekly"
+    priority: 1
+    language: "en"
+
+  - name: "HuggingFace Blog"
+    url: "https://huggingface.co/blog/feed.xml"
+    category: "open_source"
+    frequency: "weekly"
+    priority: 1
+    language: "en"
+
+  # ----- 技术 Newsletter -----
+  - name: "Papers With Code"
+    url: "https://paperswithcode.com/rss"
+    category: "papers"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+  - name: "Import AI (Jack Clark)"
+    url: "https://importai.substack.com/feed"
+    category: "newsletter"
+    frequency: "weekly"
+    priority: 1
+    language: "en"
+
+  - name: "The Batch (Andrew Ng)"
+    url: "https://www.deeplearning.ai/the-batch/feed/"
+    category: "newsletter"
+    frequency: "weekly"
+    priority: 2
+    language: "en"
+
+  - name: "AINews"
+    url: "https://buttondown.com/ainews/rss"
+    category: "newsletter"
+    frequency: "daily"
+    priority: 1
+    language: "en"
+
+# =============================================
+# YouTube 频道
+# =============================================
+
+youtube_channels:
+  - name: "Latent Space"
+    channel_id: "UCKZsMv9t-gUCTuMVOpOPjXA"
+    rss_url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCKZsMv9t-gUCTuMVOpOPjXA"
+    focus: "AI 工程 + Agent 技术"
+    language: "en"
+
+  - name: "No Priors"
+    channel_id: "UC3_AWXcf2K3l9ILVuQe-XwQ"
+    rss_url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC3_AWXcf2K3l9ILVuQe-XwQ"
+    focus: "AI 前沿对话 + VC 视角"
+    language: "en"
+
+  - name: "Two Minute Papers"
+    channel_id: "UCbfYPyITQ-7l4upoX8nvctg"
+    rss_url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg"
+    focus: "论文速读 + 视觉化理解"
+    language: "en"
+
+# =============================================
+# 关键词（用于相关度评分）
+# =============================================
+
+keywords:
+  high_relevance:
+    - "LLM"
+    - "large language model"
+    - "AI agent"
+    - "multi-agent"
+    - "RAG"
+    - "retrieval augmented generation"
+    - "reasoning"
+    - "chain of thought"
+    - "tool use"
+    - "MCP"
+    - "evals"
+    - "benchmark"
+    - "RLHF"
+    - "inference"
+    - "GEO"
+
+  medium_relevance:
+    - "transformer"
+    - "attention"
+    - "fine-tuning"
+    - "multimodal"
+    - "vision language model"
+    - "code generation"
+    - "prompt engineering"
+    - "instruction tuning"
+    - "knowledge graph"
+    - "embedding"
+
+  low_relevance:
+    - "natural language processing"
+    - "sentiment analysis"
+    - "text classification"
+    - "machine translation"
+    - "speech recognition"

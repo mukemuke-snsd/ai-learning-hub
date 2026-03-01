@@ -1,4 +1,4 @@
-"""arXiv 论文抓取器 - 支持多模块（ai_tech / geo）"""
+"""arXiv 论文抓取器 - 支持多模块"""
 
 import time
 from datetime import datetime
@@ -17,7 +17,7 @@ except ImportError:
 class ArxivScraper(BaseScraper):
     """arXiv 论文抓取器，支持 module 参数加载不同关键词"""
 
-    def __init__(self, module: str = "ai_tech"):
+    def __init__(self, module: str = "research_lab"):
         self.module = module
         self.module_cfg = load_module_config(module)
         settings = load_settings()

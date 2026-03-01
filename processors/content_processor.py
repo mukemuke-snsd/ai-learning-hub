@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 class ContentProcessor:
     """内容处理和过滤，支持多模块 + AI 富化"""
 
-    def __init__(self, db: Optional[Database] = None, module: str = "geo"):
+    def __init__(self, db: Optional[Database] = None, module: str = "product_radar"):
         self.settings = load_settings()
         self.db = db or Database()
         self.module = module

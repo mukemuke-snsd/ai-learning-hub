@@ -8,23 +8,17 @@ from generators.ai_engine import AIEngine
 from tracker.database import Database
 
 MODULE_PROMPTS = {
-    "geo": {
-        "role": "GEO（Generative Engine Optimization）领域的资深分析师",
-        "focus": "AI 搜索优化趋势、Generative Search 创新策略、行业格局变化",
-        "domain": "GEO / AI 搜索优化",
-        "tags_hint": "AI Search, SEO, GEO, LLM, Perplexity, SGE",
+    "product_radar": {
+        "role": "AI 行业产品分析师，兼具 GEO/SEO 专业深度和产品增长视角",
+        "focus": "GEO 策略变化、AI 搜索产品动态、AI Agent 工具生态、产品增长方法论",
+        "domain": "产品雷达（GEO + AI 产品 + 增长）",
+        "tags_hint": "GEO, AI Search, AI Agent, MCP, Vibe Coding, PM, Growth, B2B, SEO",
     },
-    "ai_tech": {
+    "research_lab": {
         "role": "AI 前沿技术解读专家，擅长将学术论文和技术博客翻译为产品经理可理解的语言",
-        "focus": "最具突破性的技术进展、LLM/Agent/RAG 新范式、对产品和行业的潜在影响",
-        "domain": "AI 技术前沿",
-        "tags_hint": "LLM, Transformer, RLHF, Agent, Multimodal, RAG, Evals, MCP",
-    },
-    "ai_product": {
-        "role": "AI 产品策略专家，擅长从行业内容中提炼可落地的产品方法论和增长策略",
-        "focus": "最新的 AI 产品实践、增长策略、商业化洞察和可复用方法论",
-        "domain": "AI 产品 & 策略",
-        "tags_hint": "AI产品, PM, 增长, GTM, PMF, AI UX, Vibe Coding, 工具",
+        "focus": "LLM/Agent/RAG 新范式、推理能力突破、评测方法论、对产品和行业的潜在影响",
+        "domain": "研究前沿（LLM + Agent + RAG）",
+        "tags_hint": "LLM, Agent, RAG, Reasoning, Evals, MCP, Multimodal, Benchmark",
     },
 }
 
@@ -32,7 +26,7 @@ MODULE_PROMPTS = {
 class DailyBriefingGenerator:
     """每日 AI 早报生成器 — newsletter 风格"""
 
-    def __init__(self, db: Database = None, module: str = "geo"):
+    def __init__(self, db: Database = None, module: str = "product_radar"):
         self.db = db or Database()
         self.ai = AIEngine()
         self.module = module
@@ -43,7 +37,7 @@ class DailyBriefingGenerator:
         if not target_date:
             target_date = date.today().isoformat()
 
-        prompts = MODULE_PROMPTS.get(self.module, MODULE_PROMPTS["geo"])
+        prompts = MODULE_PROMPTS.get(self.module, MODULE_PROMPTS["product_radar"])
         module_name = self.module_cfg.get("module_name", self.module)
 
         article_summaries = []
@@ -166,7 +160,7 @@ class DailyBriefingGenerator:
         if not target_date:
             target_date = date.today().isoformat()
 
-        prompts = MODULE_PROMPTS.get(self.module, MODULE_PROMPTS["geo"])
+        prompts = MODULE_PROMPTS.get(self.module, MODULE_PROMPTS["product_radar"])
         module_name = self.module_cfg.get("module_name", self.module)
 
         system_prompt = (
@@ -279,30 +273,37 @@ class DailyBriefingGenerator:
         "ai search", "perplexity", "ai overview", "ai overviews",
         "sge", "chatgpt search", "bing copilot", "generative search",
         "ai citation", "ai visibility", "geo", "search generative",
-        "generative engine", "zero-click",
+        "generative engine", "zero-click", "llms.txt", "answer engine",
+    ]
+
+    AGENT_CROSS_KEYWORDS = [
+        "ai agent", "agentic", "multi-agent", "mcp",
+        "model context protocol", "tool use", "agent economy",
+        "agent-native", "claude code", "autonomous agent",
+        "agent workflow", "agent orchestration", "cowork",
     ]
 
     def generate_unified(self, target_date: str = None) -> str:
-        """生成跨模块统一早报 — 合并三模块高质量内容"""
+        """生成跨模块统一早报 — 合并两模块高质量内容，双视角（GEO + Agent）"""
         if not target_date:
             target_date = date.today().isoformat()
 
         from processors.content_processor import ContentProcessor
 
         all_items = []
-        for mid in ["geo", "ai_tech", "ai_product"]:
+        for mid in ["product_radar", "research_lab"]:
             proc = ContentProcessor(self.db, module=mid)
             items = proc.get_daily_articles()
             for item in items:
                 item["_module"] = mid
             all_items.extend(items)
 
-        # GEO 跨模块回流：其他模块中命中 GEO 关键词的内容也标记为 GEO 相关
         for item in all_items:
-            if item["_module"] != "geo":
-                text = f"{item.get('title', '')} {item.get('summary', '')}".lower()
-                if any(kw in text for kw in self.GEO_CROSS_KEYWORDS):
-                    item["_geo_related"] = True
+            text = f"{item.get('title', '')} {item.get('summary', '')}".lower()
+            if any(kw in text for kw in self.GEO_CROSS_KEYWORDS):
+                item["_geo_related"] = True
+            if any(kw in text for kw in self.AGENT_CROSS_KEYWORDS):
+                item["_agent_related"] = True
 
         all_items.sort(
             key=lambda x: (
@@ -317,17 +318,15 @@ class DailyBriefingGenerator:
         if not top_items:
             return self.generate_no_articles(target_date)
 
-        sections = {"geo": [], "ai_tech": [], "ai_product": []}
+        sections = {"product_radar": [], "research_lab": []}
         for item in top_items:
-            mod = item.get("_module", "geo")
+            mod = item.get("_module", "product_radar")
             sections.setdefault(mod, []).append(item)
-            if item.get("_geo_related") and mod != "geo":
-                sections["geo"].append(item)
 
         items_text_parts = []
         mod_labels = {
-            "geo": "GEO 资讯", "ai_tech": "AI 技术前沿",
-            "ai_product": "AI 产品 & 策略",
+            "product_radar": "产品雷达",
+            "research_lab": "研究前沿",
         }
         for mod, label in mod_labels.items():
             items_in_mod = sections.get(mod, [])
@@ -338,10 +337,17 @@ class DailyBriefingGenerator:
                 conclusion = item.get("core_conclusion", "")
                 insight = item.get("actionable_insight", "")
                 qs = item.get("ai_quality_score", 0)
+                tags = []
+                if item.get("_geo_related"):
+                    tags.append("GEO")
+                if item.get("_agent_related"):
+                    tags.append("Agent")
+                tag_str = f" | 关注主线: {', '.join(tags)}" if tags else ""
                 items_text_parts.append(
                     f"[{i}] {item['title']}\n"
                     f"来源: {item['source']} | 模块: {label} | "
-                    f"质量分: {qs:.1f} | 相关度: {item.get('relevance_score', 0):.1f}\n"
+                    f"质量分: {qs:.1f} | 相关度: {item.get('relevance_score', 0):.1f}"
+                    f"{tag_str}\n"
                     f"摘要: {item.get('summary', '')[:300]}\n"
                     f"核心结论: {conclusion}\n"
                     f"可落地启发: {insight}\n"
@@ -350,23 +356,30 @@ class DailyBriefingGenerator:
 
         items_text = "\n\n".join(items_text_parts)
 
+        geo_count = sum(1 for i in top_items if i.get("_geo_related"))
+        agent_count = sum(1 for i in top_items if i.get("_agent_related"))
+
         system_prompt = (
-            "你是一位顶级 AI 行业分析师和 newsletter 作者。\n"
-            "你的任务是将来自三个模块（GEO 资讯、AI 技术前沿、AI 产品 & 策略）"
-            "的最新内容合并为一份高质量的每日统一早报。\n\n"
+            "你是一位服务于 B2B 产品经理的 AI 行业分析师和 newsletter 作者。\n"
+            "读者背景：欧洲 B2B 采购平台产品经理，核心关注 GEO（Generative Engine Optimization）"
+            "和 AI Agent 两大方向，同时具备 SEO/增长/数据分析经验。\n\n"
+            "你的任务是将来自两个模块（产品雷达、研究前沿）的最新内容合并为一份"
+            "高质量的每日统一早报，始终从 GEO 和 AI Agent 双视角解读。\n\n"
             "风格要求：\n"
             "1. 使用中文输出，Markdown 格式\n"
             "2. 像 Stratechery / The Information / Morning Brew 那样——"
             "信息密度高、分析有深度、语言简洁有力\n"
             "3. 跨源趋势检测：如果多个独立来源提到同一话题，这是重要趋势信号\n"
             "4. 每条要点标注来源、标签和优先级\n"
-            "5. 不要布置任务，只提供信息、洞察和启发"
+            "5. 不要布置任务，只提供信息、洞察和启发\n"
+            "6. 在深度解读环节，必须包含 GEO 视角和 Agent 视角两个固定角度"
         )
 
         user_prompt = f"""请将以下跨模块内容合并为统一的每日早报。
 
 📅 日期：{target_date}
-📊 今日内容：GEO {len(sections.get('geo', []))} 条 | AI技术 {len(sections.get('ai_tech', []))} 条 | AI产品 {len(sections.get('ai_product', []))} 条
+📊 今日内容：产品雷达 {len(sections.get('product_radar', []))} 条 | 研究前沿 {len(sections.get('research_lab', []))} 条
+🔍 关注主线命中：GEO 相关 {geo_count} 条 | Agent 相关 {agent_count} 条
 
 ---
 {items_text}
@@ -379,26 +392,25 @@ class DailyBriefingGenerator:
 ---
 
 ### 🔥 今日核心速览
-（从所有模块中挑选 3-5 条最重要的，按优先级排序。注意：总条目控制在 7-10 条以内，确保 30 分钟内读完。每条格式：）
+（从所有模块中挑选 3-5 条最重要的，按优先级排序。总条目控制在 7-10 条以内，确保 30 分钟内读完。每条格式：）
 
 1. **[核心观点/事件]**
-   - 来源: [来源] | 模块: [GEO/AI技术/AI产品] | 优先级: 高/中
+   - 来源: [来源] | 模块: [产品雷达/研究前沿] | 优先级: 高/中
    - 标签: [关键词标签]
    - 为什么重要: [一句话]
    - 可落地启发: [一句话]
 
 ---
 
-### 💡 深度解读
-（从不同模块各选 1 个最有深度的内容解读）
+### 💡 深度解读（双视角）
 
-- **[GEO 角度]**: ...
-  - 核心逻辑 + 可应用场景
+- **🔍 GEO 视角**: [从今日内容中提炼对 GEO 策略最有价值的洞察]
+  - 核心逻辑 + 对 AI 搜索优化的影响 + 可应用场景
 
-- **[AI技术角度]**: ...
-  - 核心逻辑 + 可应用场景
+- **🤖 Agent 视角**: [从今日内容中提炼对 AI Agent 生态最有价值的洞察]
+  - 核心逻辑 + 对 Agent 工具链/工作流的影响 + 可应用场景
 
-- **[AI产品洞察]**: ...
+- **📦 产品/增长洞察**: [如有其他值得深读的产品或增长策略内容]
   - 核心逻辑 + 可应用场景
 
 ---
@@ -429,7 +441,7 @@ class DailyBriefingGenerator:
 ---
 
 ### 💭 今日思考题
-（1-2 个跨模块的思考题）"""
+（1-2 个连接 GEO + Agent 双主线的思考题）"""
 
         content = self.ai.generate(
             system_prompt=system_prompt,

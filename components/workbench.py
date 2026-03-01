@@ -10,9 +10,8 @@ from styles.icons import icon, imd, iheader, DOT_GREEN, DOT_YELLOW, DOT_RED
 
 
 MODULE_META = {
-    "geo": {"icon": "globe", "label": "GEO"},
-    "ai_tech": {"icon": "cpu", "label": "AI技术"},
-    "ai_product": {"icon": "rocket", "label": "AI产品"},
+    "product_radar": {"icon": "briefcase", "label": "产品雷达"},
+    "research_lab": {"icon": "cpu", "label": "研究前沿"},
 }
 
 
@@ -51,15 +50,15 @@ def render_workbench(db):
             unsafe_allow_html=True,
         )
 
-        tab_unified, tab_geo, tab_tech, tab_product, tab_history = st.tabs([
-            "统一早报", "GEO", "AI技术", "AI产品", "历史"
+        tab_unified, tab_radar, tab_lab, tab_history = st.tabs([
+            "统一早报", "产品雷达", "研究前沿", "历史"
         ])
 
         with tab_unified:
             st.markdown(unified["content"])
-            db.log_activity("briefing_read", 15, f"阅读 {today_str} 统一早报", "geo")
+            db.log_activity("briefing_read", 15, f"阅读 {today_str} 统一早报", "product_radar")
 
-        for tab, mid in [(tab_geo, "geo"), (tab_tech, "ai_tech"), (tab_product, "ai_product")]:
+        for tab, mid in [(tab_radar, "product_radar"), (tab_lab, "research_lab")]:
             with tab:
                 mod_b = db.get_briefing(today_str, module=mid)
                 if mod_b:
@@ -94,57 +93,48 @@ def render_workbench(db):
             unsafe_allow_html=True
         )
         with st.container():
-            sc1, sc2, sc3 = st.columns(3)
+            sc1, sc2 = st.columns(2)
 
             with sc1:
-                if st.button("抓取 GEO", use_container_width=True, key="wb_geo"):
-                    with st.spinner("抓取 GEO 高频源..."):
+                if st.button("抓取 产品雷达", use_container_width=True, key="wb_radar"):
+                    with st.spinner("抓取产品雷达信息源..."):
                         from scrapers.rss_scraper import RSSScraper
                         from processors.content_processor import ContentProcessor
-                        scraper = RSSScraper(module="geo")
-                        items = scraper.fetch_all(verbose=False, frequency="daily")
-                        proc = ContentProcessor(db, module="geo")
+                        items = []
+                        try:
+                            from scrapers.youtube_scraper import YouTubeScraper
+                            yt = YouTubeScraper(module="product_radar", fetch_transcripts=False)
+                            items.extend(yt.fetch_all(verbose=False))
+                        except Exception:
+                            pass
+                        rss = RSSScraper(module="product_radar")
+                        items.extend(rss.fetch_all(verbose=False, frequency="daily"))
+                        proc = ContentProcessor(db, module="product_radar")
                         stats = proc.process_and_save(items)
-                        st.success(f"GEO: 新增 {stats['new_saved']} / 总 {stats['total_fetched']}")
+                        st.success(f"产品雷达: 新增 {stats['new_saved']} / 总 {stats['total_fetched']}")
 
             with sc2:
-                if st.button("抓取 AI技术", use_container_width=True, key="wb_tech"):
-                    with st.spinner("抓取 AI 技术前沿..."):
+                if st.button("抓取 研究前沿", use_container_width=True, key="wb_lab"):
+                    with st.spinner("抓取研究前沿信息源..."):
                         from scrapers.rss_scraper import RSSScraper
                         from processors.content_processor import ContentProcessor
                         items = []
                         try:
                             from scrapers.arxiv_scraper import ArxivScraper
-                            items = ArxivScraper(module="ai_tech").fetch_all(verbose=False)
+                            items = ArxivScraper(module="research_lab").fetch_all(verbose=False)
                         except ImportError:
                             pass
                         try:
                             from scrapers.youtube_scraper import YouTubeScraper
-                            items.extend(YouTubeScraper(module="ai_tech").fetch_all(verbose=False))
+                            yt = YouTubeScraper(module="research_lab", fetch_transcripts=False)
+                            items.extend(yt.fetch_all(verbose=False))
                         except Exception:
                             pass
-                        rss = RSSScraper(module="ai_tech")
+                        rss = RSSScraper(module="research_lab")
                         items.extend(rss.fetch_all(verbose=False))
-                        proc = ContentProcessor(db, module="ai_tech")
+                        proc = ContentProcessor(db, module="research_lab")
                         stats = proc.process_and_save(items)
-                        st.success(f"AI技术: 新增 {stats['new_saved']} / 总 {stats['total_fetched']}")
-
-            with sc3:
-                if st.button("抓取 AI产品", use_container_width=True, key="wb_product"):
-                    with st.spinner("抓取 AI 产品 & 策略..."):
-                        from scrapers.rss_scraper import RSSScraper
-                        from processors.content_processor import ContentProcessor
-                        items = []
-                        try:
-                            from scrapers.youtube_scraper import YouTubeScraper
-                            items.extend(YouTubeScraper().fetch_all(verbose=False))
-                        except Exception:
-                            pass
-                        rss = RSSScraper(module="ai_product")
-                        items.extend(rss.fetch_all(verbose=False))
-                        proc = ContentProcessor(db, module="ai_product")
-                        stats = proc.process_and_save(items)
-                        st.success(f"AI产品: 新增 {stats['new_saved']} / 总 {stats['total_fetched']}")
+                        st.success(f"研究前沿: 新增 {stats['new_saved']} / 总 {stats['total_fetched']}")
 
             for mid, meta in MODULE_META.items():
                 unused = len(db.get_unused_content(mid, limit=999))
@@ -165,10 +155,10 @@ def render_workbench(db):
                         proc.enrich_with_ai(unenriched)
 
                 with st.spinner("生成统一早报中..."):
-                    gen = DailyBriefingGenerator(db, module="geo")
+                    gen = DailyBriefingGenerator(db, module="product_radar")
                     content = gen.generate_unified(today_str)
                     db.log_activity("briefing_generated", 5,
-                                    f"生成 {today_str} 统一早报", "geo")
+                                    f"生成 {today_str} 统一早报", "product_radar")
 
                 st.success("早报生成完成！")
                 st.rerun()

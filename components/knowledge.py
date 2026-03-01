@@ -9,15 +9,13 @@ from styles.icons import icon, imd, iheader
 
 
 MODULE_LABELS = {
-    "geo": "GEO",
-    "ai_tech": "AI技术",
-    "ai_product": "AI产品",
+    "product_radar": "产品雷达",
+    "research_lab": "研究前沿",
 }
 
 MODULE_PILL = {
-    "geo": '<span class="pill-geo">GEO</span>',
-    "ai_tech": '<span class="pill-paper">AI技术</span>',
-    "ai_product": '<span class="pill-creator">AI产品</span>',
+    "product_radar": '<span class="pill-geo">产品雷达</span>',
+    "research_lab": '<span class="pill-paper">研究前沿</span>',
 }
 
 TYPE_ICONS = {
@@ -81,7 +79,7 @@ def render_knowledge(db):
     with fc1:
         module_filter = st.selectbox(
             "模块",
-            ["全部", "geo", "ai_tech", "ai_product"],
+            ["全部", "product_radar", "research_lab"],
             format_func=lambda x: "全部模块" if x == "全部" else MODULE_LABELS.get(x, x),
             key="kb_module_filter",
         )
@@ -186,7 +184,7 @@ def render_knowledge(db):
                                    key="kb_kw_search")
         with col_km:
             kb_mod = st.selectbox(
-                "模块", ["全部", "geo", "ai_tech", "ai_product"],
+                "模块", ["全部", "product_radar", "research_lab"],
                 format_func=lambda x: "全部" if x == "全部" else MODULE_LABELS.get(x, x),
                 key="kb_kw_mod",
             )
@@ -281,7 +279,7 @@ def render_knowledge(db):
         if source_stats:
             stats_df = pd.DataFrame(source_stats)
             stats_df["module_label"] = stats_df["module"].map(
-                {"geo": "GEO", "ai_tech": "AI技术", "ai_product": "AI产品"}
+                MODULE_LABELS
             )
             stats_df["avg_relevance"] = stats_df["avg_relevance"].round(2)
             stats_df["avg_quality"] = stats_df["avg_quality"].round(1)
@@ -339,7 +337,7 @@ def render_knowledge(db):
                     if not url:
                         url = f"manual://{platform}/{creator}/{datetime.now().strftime('%Y%m%d%H%M%S')}"
                     item = {
-                        "module": "ai_product",
+                        "module": "product_radar",
                         "content_type": content_type,
                         "title": title,
                         "url": url,
@@ -354,7 +352,7 @@ def render_knowledge(db):
                     }
                     saved = db.save_content_item(item)
                     if saved:
-                        db.log_activity("manual_input", 5, f"手动录入: {title}", "ai_product")
+                        db.log_activity("manual_input", 5, f"手动录入: {title}", "product_radar")
                         st.success(f"已保存: {title}")
                     else:
                         st.warning("内容可能已存在（链接重复）")
